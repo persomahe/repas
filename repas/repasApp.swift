@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct repasApp: App {
@@ -13,5 +14,6 @@ struct repasApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self])
     }
 }

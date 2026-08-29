@@ -70,10 +70,23 @@ struct NouveauProduitView: View {
     @State private var nom = ""
     @State private var tagsChoisis: Set<Tag> = []
 
+    /// Nom du dernier produit ajouté, pour afficher une confirmation
+    @State private var dernierAjout: String?
+
+    /// Garde le focus sur le champ nom pour enchaîner les saisies
+    @FocusState private var nomFocalise: Bool
+
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Nom du produit", text: $nom)
+                    .focused($nomFocalise)
+                    .onSubmit(ajouterProduit)
+
+                if let dernierAjout {
+                    Label("« \(dernierAjout) » ajouté", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
 
                 Section("Tags") {
                     if tousLesTags.isEmpty {
@@ -108,17 +121,28 @@ struct NouveauProduitView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button("Fermer") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Ajouter") {
-                        context.insert(Produit(nom: nom.trimmingCharacters(in: .whitespaces), tags: Array(tagsChoisis)))
-                        dismiss()
-                    }
-                    .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
+                    Button("Ajouter", action: ajouterProduit)
+                        .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
         }
+    }
+
+    /// Enregistre le produit puis réinitialise le formulaire pour la saisie suivante.
+    private func ajouterProduit() {
+        let nomNettoye = nom.trimmingCharacters(in: .whitespaces)
+        guard !nomNettoye.isEmpty else { return }
+
+        context.insert(Produit(nom: nomNettoye, tags: Array(tagsChoisis)))
+        dernierAjout = nomNettoye
+
+        // Réinitialise le formulaire sans fermer la fiche
+        nom = ""
+        tagsChoisis = []
+        nomFocalise = true
     }
 }
 

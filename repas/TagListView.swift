@@ -13,6 +13,9 @@ struct TagListView: View {
     /// Récupère automatiquement tous les tags, triés par nom
     @Query(sort: \Tag.nom) private var tags: [Tag]
 
+    /// Contrôle l'affichage de la fiche de création d'un tag
+    @State private var ajoutEnCours = false
+
     var body: some View {
         List(tags) { tag in
             HStack {
@@ -23,6 +26,16 @@ struct TagListView: View {
             }
         }
         .navigationTitle("Tags")
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Ajouter un tag", systemImage: "plus") {
+                    ajoutEnCours = true
+                }
+            }
+        }
+        .sheet(isPresented: $ajoutEnCours) {
+            NouveauTagView()
+        }
         .overlay {
             if tags.isEmpty {
                 ContentUnavailableView(
@@ -30,6 +43,58 @@ struct TagListView: View {
                     systemImage: "tag",
                     description: Text("Les tags que tu créeras apparaîtront ici.")
                 )
+            }
+        }
+    }
+}
+
+/// Fiche de création d'un nouveau tag (nom + couleur).
+struct NouveauTagView: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var nom = ""
+    @State private var couleurHex = "#007AFF"
+
+    /// Palette de couleurs proposées
+    private let couleurs = ["#007AFF", "#34C759", "#FF9500", "#FF3B30", "#AF52DE", "#5856D6", "#FF2D55", "#8E8E93"]
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("Nom du tag", text: $nom)
+
+                Section("Couleur") {
+                    HStack {
+                        ForEach(couleurs, id: \.self) { hex in
+                            Circle()
+                                .fill(Color(hex: hex))
+                                .frame(width: 30, height: 30)
+                                .overlay {
+                                    if hex == couleurHex {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.white)
+                                            .fontWeight(.bold)
+                                    }
+                                }
+                                .onTapGesture { couleurHex = hex }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Nouveau tag")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Ajouter") {
+                        context.insert(Tag(nom: nom.trimmingCharacters(in: .whitespaces), couleurHex: couleurHex))
+                        dismiss()
+                    }
+                    .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
             }
         }
     }
