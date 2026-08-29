@@ -64,19 +64,14 @@ final class Recette {
 }
 
 /// Table de liaison : un couple (produit, quantité) appartenant à une recette.
+@available(iOS 26.0, macOS 26.0, *)
 @Model
-final class IngredientRecette {
-    /// Produit utilisé
-    var produit: Produit?
-
-    /// Quantité nécessaire (l'unité pourra être ajoutée plus tard)
-    var quantite: Double
-
+final class IngredientRecette: Ingredient {
     /// Recette à laquelle appartient ce couple (relation inverse)
     var recette: Recette?
 
-    init(produit: Produit? = nil, quantite: Double = 1) {
-        self.produit = produit
-        self.quantite = quantite
+    init(recette: Recette? = nil, produit: Produit? = nil, quantite: Double = 1) {
+        self.recette = recette
+        super.init(produit: produit, quantite: quantite)
     }
 }
