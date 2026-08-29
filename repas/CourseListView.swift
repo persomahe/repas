@@ -22,10 +22,28 @@ struct CourseListView: View {
     /// Ingrédients déjà ajoutés, fusionnés par produit
     private var dejaAjoutes: [IngredientCourse] {
         var fusion: [Produit: Double] = [:]
+
+        // 1. Ingrédients déjà enregistrés dans la course
         for ingredient in course.ingredients {
             guard let produit = ingredient.produit else { continue }
             fusion[produit, default: 0] += ingredient.quantite
         }
+
+        // 2. Ingrédients calculés à partir des recettes de la semaine
+        if let semaine = course.semaine {
+            for planification in semaine.recettes {
+                guard let recette = planification.recette,
+                      recette.nombreDeParts > 0 else { continue }
+
+                let ratio = Double(planification.nombreDeParts) / Double(recette.nombreDeParts)
+
+                for ingredient in recette.ingredients {
+                    guard let produit = ingredient.produit else { continue }
+                    fusion[produit, default: 0] += ingredient.quantite * ratio
+                }
+            }
+        }
+
         return fusion.map { IngredientCourse(produit: $0.key, quantite: $0.value) }
             .sorted { ($0.produit?.nom ?? "") < ($1.produit?.nom ?? "") }
     }
@@ -33,9 +51,11 @@ struct CourseListView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                // Date de la course
-                Label(course.date.formatted(date: .complete, time: .omitted), systemImage: "cart")
-                    .font(.headline)
+                // Semaine de la course
+                if let semaine = course.semaine {
+                    Label(semaine.date.formatted(date: .complete, time: .omitted), systemImage: "cart")
+                        .font(.headline)
+                }
 
                 // Section "Déjà ajoutés"
                 SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle.fill")
@@ -150,7 +170,7 @@ private struct IngredientCard: View {
 
 #Preview {
     NavigationStack {
-        CourseListView(course: Course(date: .now))
+        CourseListView(course: Course(semaine: Semaine(date: .now, recettes: [] )))
     }
     .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self, Course.self, IngredientCourse.self], inMemory: true)
 }

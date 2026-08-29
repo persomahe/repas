@@ -8,19 +8,19 @@
 import Foundation
 import SwiftData
 
-/// Table des courses : une liste de courses, identifiée par une date.
+/// Table des courses : une liste de courses, associée à une semaine.
 @Model
 final class Course {
-    /// Date de la course. Par défaut, la date de la dernière semaine enregistrée.
-    var date: Date
+    /// Semaine de la course.
+    var semaine: Semaine?
 
     /// Couples (produit, quantité) à acheter.
     /// Supprimer la course supprime aussi ses lignes d'ingrédients.
     @Relationship(deleteRule: .cascade, inverse: \IngredientCourse.course)
     var ingredients: [IngredientCourse]
 
-    init(date: Date, ingredients: [IngredientCourse] = []) {
-        self.date = date
+    init(semaine: Semaine? = nil, ingredients: [IngredientCourse] = []) {
+        self.semaine = semaine
         self.ingredients = ingredients
     }
 }
