@@ -14,6 +14,6 @@ struct repasApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self])
+        .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self])
     }
 }

@@ -32,6 +32,12 @@ struct ContentView: View {
                     RecetteListView()
                 }
                 .buttonStyle(.borderedProminent)
+
+                NavigationLink("Planifier ma semaine") {
+                    SemaineListView()
+                }
+                .buttonStyle(.borderedProminent)
+                
             }
             .padding()
             .navigationTitle("REPAS")
