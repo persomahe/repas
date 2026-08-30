@@ -20,10 +20,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Image(systemName: "globe")
-                    .imageScale(.large)
-                    .foregroundStyle(.tint)
-                Text("Hello, world!")
                 Text("Application REPAS")
 
                 NavigationLink("Voir les tags") {
