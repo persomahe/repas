@@ -49,61 +49,51 @@ struct CourseListView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                // Semaine de la course
-                if let semaine = course.semaine {
-                    Label(semaine.date.formatted(date: .complete, time: .omitted), systemImage: "cart")
-                        .font(.headline)
-                }
-
-                // Section "Déjà ajoutés"
-                SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle.fill")
-                if dejaAjoutes.isEmpty {
-                    Text("Aucun ingrédient ajouté pour l'instant.")
-                        .foregroundStyle(.secondary)
-                } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
-                        ForEach(dejaAjoutes) { ingredient in
-                            IngredientCard(
-                                nom: ingredient.produit?.nom ?? "Inconnu",
-                                quantite: ingredient.quantite
-                            )
-                        }
-                    }
-                }
-
-                // Section "À prendre"
-                SectionHeader(title: "À prendre", systemImage: "plus.circle")
-                if produits.isEmpty {
-                    Text("Aucun produit disponible. Crée d'abord des produits.")
-                        .foregroundStyle(.secondary)
-                } else {
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
-                        ForEach(produits) { produit in
-                            Button {
-                                ajouterAprendre(produit)
-                            } label: {
-                                IngredientCard(
-                                    nom: produit.nom,
-                                    quantite: quantitePour(produit)
-                                )
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                }
-
-                if !aPrendre.isEmpty {
-                    Button("Ajouter à la course", systemImage: "cart.badge.plus") {
-                        enregistrerAprendre()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .frame(maxWidth: .infinity)
+        List {
+            // Section "Déjà ajoutés"
+            SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
+            if dejaAjoutes.isEmpty {
+                Text("Aucun ingrédient déjà ajouté.")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(dejaAjoutes) { ingredient in
+                    IngredientCard(
+                        nom: ingredient.produit?.nom ?? "Inconnu",
+                        quantite: ingredient.quantite
+                    )
                 }
             }
-            .padding()
+
+            // Section "À prendre"
+            SectionHeader(title: "À prendre", systemImage: "plus.circle")
+            if produits.isEmpty {
+                Text("Aucun produit disponible. Crée d'abord des produits.")
+                    .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
+                    ForEach(produits) { produit in
+                        Button {
+                            ajouterAprendre(produit)
+                        } label: {
+                            IngredientCard(
+                                nom: produit.nom,
+                                quantite: quantitePour(produit)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            if !aPrendre.isEmpty {
+                Button("Ajouter à la course", systemImage: "cart.badge.plus") {
+                    enregistrerAprendre()
+                }
+                .buttonStyle(.borderedProminent)
+                .frame(maxWidth: .infinity)
+            }
         }
+        .padding()
         .navigationTitle("Liste de courses")
     }
 
@@ -170,7 +160,7 @@ private struct IngredientCard: View {
 
 #Preview {
     NavigationStack {
-        CourseListView(course: Course(semaine: Semaine(date: .now, recettes: [] )))
+        CourseListView(course: Course(semaine: Semaine(date: .now)))
     }
     .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self, Course.self, IngredientCourse.self], inMemory: true)
 }
