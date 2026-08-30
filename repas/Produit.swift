@@ -15,6 +15,7 @@ final class Produit {
     @Attribute(.unique) var nom: String
 
     /// Tags associés au produit (relation plusieurs-à-plusieurs avec la table Tag)
+    @Relationship(inverse: \Tag.produits)
     var tags: [Tag]
 
     init(nom: String, tags: [Tag] = []) {

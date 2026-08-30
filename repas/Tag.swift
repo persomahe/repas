@@ -20,6 +20,9 @@ final class Tag {
     /// Date de création du tag
     var dateCreation: Date
 
+    /// Produits associés à ce tag (relation inverse de Produit.tags)
+    var produits: [Produit] = []
+
     init(nom: String, couleurHex: String = "#007AFF", dateCreation: Date = .now) {
         self.nom = nom
         self.couleurHex = couleurHex
