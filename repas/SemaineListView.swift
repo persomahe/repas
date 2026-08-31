@@ -241,6 +241,16 @@ struct EditSemaineView: View {
                                 value: $recettesChoisies[index].nombreDeParts,
                                 in: 1...50
                             )
+
+                            // Retire la recette de la semaine (sans la supprimer de la liste des recettes)
+                            Button {
+                                recettesChoisies.remove(at: index)
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color.red)
+                            .accessibilityLabel("Retirer \(recettesChoisies[index].recette.nom) de la semaine")
                         }
                     }
                     .onDelete { indices in
