@@ -5,20 +5,7 @@
 //  Created by erwan mahe on 29/08/2026.
 //
 
-import Foundation
-import SwiftData
-
-/// Classe de base : un couple (produit, quantité) utilisé dans une recette ou une course.
-@Model
-class Ingredient {
-    /// Produit utilisé
-    var produit: Produit?
-
-    /// Quantité nécessaire (l'unité pourra être ajoutée plus tard)
-    var quantite: Double
-
-    init(produit: Produit? = nil, quantite: Double = 1) {
-        self.produit = produit
-        self.quantite = quantite
-    }
-}
+// NOTE : SwiftData ne supporte pas l'héritage de modèles @Model.
+// Les classes IngredientCourse et IngredientRecette sont désormais
+// des modèles autonomes (voir Course.swift et Recette.swift).
+// Ce fichier est conservé vide pour ne pas casser le projet.

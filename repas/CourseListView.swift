@@ -13,6 +13,8 @@ struct CourseListView: View {
     /// La course affichée
     let course: Course
 
+    @Environment(\.modelContext) private var modelContext
+
     /// Tous les produits existants, pour la liste "à prendre"
     @Query(sort: \Produit.nom) private var produits: [Produit]
 
@@ -20,13 +22,28 @@ struct CourseListView: View {
     @State private var aPrendre: [IngredientCourse] = []
 
     /// Ingrédients déjà ajoutés, fusionnés par produit
-    private var dejaAjoutes: [IngredientCourse] {
-        var fusion: [Produit: Double] = [:]
+    private var dejaAjoutes: [IngredientAgrege] {
+        guard course.modelContext != nil else {
+            assertionFailure("CourseListView reçoit une Course non attachée au ModelContext")
+            return []
+        }
+
+        var fusion: [PersistentIdentifier: IngredientAgrege] = [:]
+
+        func ajouter(_ produit: Produit, quantite: Double) {
+            let id = produit.persistentModelID
+            if var element = fusion[id] {
+                element.quantite += quantite
+                fusion[id] = element
+            } else {
+                fusion[id] = IngredientAgrege(id: id, produit: produit, quantite: quantite)
+            }
+        }
 
         // 1. Ingrédients déjà enregistrés dans la course
         for ingredient in course.ingredients {
             guard let produit = ingredient.produit else { continue }
-            fusion[produit, default: 0] += ingredient.quantite
+            ajouter(produit, quantite: ingredient.quantite)
         }
 
         // 2. Ingrédients calculés à partir des recettes de la semaine
@@ -39,13 +56,13 @@ struct CourseListView: View {
 
                 for ingredient in recette.ingredients {
                     guard let produit = ingredient.produit else { continue }
-                    fusion[produit, default: 0] += ingredient.quantite * ratio
+                    ajouter(produit, quantite: ingredient.quantite * ratio)
                 }
             }
         }
 
-        return fusion.map { IngredientCourse(produit: $0.key, quantite: $0.value) }
-            .sorted { ($0.produit?.nom ?? "") < ($1.produit?.nom ?? "") }
+        return Array(fusion.values)
+            .sorted { $0.produit.nom < $1.produit.nom }
     }
 
     var body: some View {
@@ -58,7 +75,7 @@ struct CourseListView: View {
             } else {
                 ForEach(dejaAjoutes) { ingredient in
                     IngredientCard(
-                        nom: ingredient.produit?.nom ?? "Inconnu",
+                        nom: ingredient.produit.nom,
                         quantite: ingredient.quantite
                     )
                 }
@@ -113,11 +130,24 @@ struct CourseListView: View {
 
     /// Enregistre les ingrédients "à prendre" dans la course puis vide la liste.
     private func enregistrerAprendre() {
+        guard course.modelContext != nil else {
+            assertionFailure("Impossible d'enregistrer: la Course n'est pas attachée au ModelContext")
+            return
+        }
+
         for ingredient in aPrendre {
+            modelContext.insert(ingredient)
             course.ingredients.append(ingredient)
         }
         aPrendre = []
     }
+}
+
+/// Représentation agrégée d'un produit dans la liste de courses.
+private struct IngredientAgrege: Identifiable {
+    let id: PersistentIdentifier
+    let produit: Produit
+    var quantite: Double
 }
 
 /// En-tête de section avec icône.

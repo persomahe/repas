@@ -26,14 +26,20 @@ final class Course {
 }
 
 /// Table de liaison : un couple (produit, quantité) appartenant à une course.
-@available(iOS 26.0, macOS 26.0, *)
 @Model
-final class IngredientCourse: Ingredient {
+final class IngredientCourse {
     /// Course à laquelle appartient ce couple (relation inverse)
     var course: Course?
 
+    /// Produit utilisé
+    var produit: Produit?
+
+    /// Quantité nécessaire (l'unité pourra être ajoutée plus tard)
+    var quantite: Double
+
     init(course: Course? = nil, produit: Produit? = nil, quantite: Double = 1) {
         self.course = course
-        super.init(produit: produit, quantite: quantite)
+        self.produit = produit
+        self.quantite = quantite
     }
 }

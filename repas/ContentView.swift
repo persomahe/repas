@@ -9,6 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+
     /// Toutes les semaines, triées de la plus récente à la plus ancienne
     @Query(sort: \Semaine.date, order: .reverse) private var semaines: [Semaine]
 
@@ -45,7 +47,7 @@ struct ContentView: View {
 
                 NavigationLink("Ma liste de courses") {
                     if let semaine = derniereSemaine {
-                        CourseListView(course: Course(semaine: semaine))
+                        CourseDestinationView(semaine: semaine)
                     } else {
                         Text("Aucune semaine planifiée.")
                     }
@@ -58,8 +60,43 @@ struct ContentView: View {
     }
 }
 
+/// Prépare une course gérée par SwiftData pour la semaine puis affiche la liste.
+private struct CourseDestinationView: View {
+    let semaine: Semaine
+
+    @Environment(\.modelContext) private var modelContext
+    @Query private var courses: [Course]
+    @State private var course: Course?
+
+    init(semaine: Semaine) {
+        self.semaine = semaine
+        let semaineID = semaine.persistentModelID
+        _courses = Query(filter: #Predicate<Course> { course in
+            course.semaine?.persistentModelID == semaineID
+        })
+    }
+
+    var body: some View {
+        Group {
+            if let course {
+                CourseListView(course: course)
+            } else {
+                ProgressView("Préparation de la liste...")
+            }
+        }
+        .task {
+            if let existante = courses.first {
+                course = existante
+                return
+            }
+
+            let nouvelleCourse = Course(semaine: semaine)
+            modelContext.insert(nouvelleCourse)
+            course = nouvelleCourse
+        }
+    }
+}
+
 #Preview {
     ContentView()
 }
-
-// CourseListView(course: Course(semaine: .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self, Course.self, IngredientCourse.self])))

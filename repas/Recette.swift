@@ -31,6 +31,7 @@ final class Recette {
     var saisons: [Saison]
 
     /// Tags associés (relation plusieurs-à-plusieurs avec la table Tag)
+    @Relationship(inverse: \Tag.recettes)
     var tags: [Tag]
 
     /// Lien vers la recette : URL web (https://…) ou fichier local (file://…, texte ou PDF)
@@ -44,6 +45,10 @@ final class Recette {
     @Relationship(deleteRule: .cascade, inverse: \IngredientRecette.recette)
     var ingredients: [IngredientRecette]
 
+    /// Planifications de cette recette dans des semaines (relation inverse de RecetteSemaine.recette)
+    @Relationship(inverse: \RecetteSemaine.recette)
+    var semaines: [RecetteSemaine]
+
     init(
         nom: String,
         nombreDeParts: Int = 4,
@@ -51,7 +56,8 @@ final class Recette {
         tags: [Tag] = [],
         lien: URL? = nil,
         tempsPreparationMinutes: Int = 0,
-        ingredients: [IngredientRecette] = []
+        ingredients: [IngredientRecette] = [],
+        semaines: [RecetteSemaine] = []
     ) {
         self.nom = nom
         self.nombreDeParts = nombreDeParts
@@ -60,18 +66,25 @@ final class Recette {
         self.lien = lien
         self.tempsPreparationMinutes = tempsPreparationMinutes
         self.ingredients = ingredients
+        self.semaines = semaines
     }
 }
 
 /// Table de liaison : un couple (produit, quantité) appartenant à une recette.
-@available(iOS 26.0, macOS 26.0, *)
 @Model
-final class IngredientRecette: Ingredient {
+final class IngredientRecette {
     /// Recette à laquelle appartient ce couple (relation inverse)
     var recette: Recette?
 
+    /// Produit utilisé
+    var produit: Produit?
+
+    /// Quantité nécessaire (l'unité pourra être ajoutée plus tard)
+    var quantite: Double
+
     init(recette: Recette? = nil, produit: Produit? = nil, quantite: Double = 1) {
         self.recette = recette
-        super.init(produit: produit, quantite: quantite)
+        self.produit = produit
+        self.quantite = quantite
     }
 }
