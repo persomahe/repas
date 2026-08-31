@@ -73,11 +73,14 @@ struct CourseListView: View {
                 Text("Aucun ingrédient déjà ajouté.")
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(dejaAjoutes) { ingredient in
-                    IngredientCard(
-                        nom: ingredient.produit.nom,
-                        quantite: ingredient.quantite
-                    )
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
+                    ForEach(dejaAjoutes) { ingredient in
+                        IngredientCard(
+                            nom: ingredient.produit.nom,
+                            quantite: ingredient.quantite
+                        )
+                    }
                 }
             }
 
@@ -87,7 +90,7 @@ struct CourseListView: View {
                 Text("Aucun produit disponible. Crée d'abord des produits.")
                     .foregroundStyle(.secondary)
             } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
                     ForEach(produits) { produit in
                         Button {
                             ajouterAprendre(produit)
@@ -110,7 +113,7 @@ struct CourseListView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding()
+
         .navigationTitle("Liste de courses")
     }
 
@@ -175,11 +178,11 @@ private struct IngredientCard: View {
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
             Text(quantite.formatted(.number.precision(.fractionLength(0...2))))
-                .font(.title3)
-                .fontWeight(.bold)
+                .font(.subheadline)
+                .fontWeight(.medium)
                 .foregroundStyle(.tint)
         }
-        .frame(maxWidth: .infinity, minHeight: 80)
+        .frame(maxWidth: .infinity, minHeight: 70)
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 12)

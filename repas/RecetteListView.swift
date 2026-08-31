@@ -353,10 +353,105 @@ struct EditRecetteView: View {
             Form {
                 Section {
                     TextField("Nom de la recette", text: $nom)
-                    Stepper("Parts : \(nombreDeParts)", value: $nombreDeParts, in: 1...50)
-                    Stepper("Préparation : \(tempsPreparationMinutes) min", value: $tempsPreparationMinutes, in: 0...600, step: 5)
+                        .fontWeight(.semibold)
+                    HStack {
+                        Text("Parts")
+
+                        Button {
+                            nombreDeParts = max(1, nombreDeParts - 1)
+                        } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.plain)
+
+                        Text("\(nombreDeParts)")
+                            .monospacedDigit()
+                            .frame(width: 20)
+
+                        Button {
+                            nombreDeParts = min(50, nombreDeParts + 1)
+                        } label: {
+                            Image(systemName: "plus.circle")
+                        }
+                        .buttonStyle(.plain)
+
+                        Spacer()
+
+                        Text("Préparation (min)")
+
+
+                         Button {
+                             tempsPreparationMinutes = max(0, tempsPreparationMinutes - 5)
+                         } label: {
+                             Image(systemName: "minus.circle")
+                         }
+                         .buttonStyle(.plain)
+
+                         Text("\(tempsPreparationMinutes)")
+                             .monospacedDigit()
+                             .frame(width: 30)
+
+                         Button {
+                             tempsPreparationMinutes = min(600, tempsPreparationMinutes + 5)
+                         } label: {
+                             Image(systemName: "plus.circle")
+                         }
+                         .buttonStyle(.plain)
+                    }
                 }
 
+                Section("Ingrédients") {
+                    ForEach(ingredients.indices, id: \.self) { index in
+                        HStack {
+                            Text(ingredients[index].produit.nom)
+                            Spacer()
+                            Text(ingredients[index].quantite.formatted())
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .onDelete { indices in
+                        ingredients.remove(atOffsets: indices)
+                    }
+
+                    if tousLesProduits.isEmpty {
+                        Text("Aucun produit disponible. Crée d'abord des produits.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Picker("Produit", selection: $produitChoisi) {
+                            Text("Choisir…").tag(Produit?.none)
+                            ForEach(tousLesProduits) { produit in
+                                Text(produit.nom).tag(Optional(produit))
+                            }
+                        }
+
+                        HStack {
+                            Text("Quantité")
+                            Spacer()
+                            TextField("Quantité", value: $quantiteChoisie, format: .number)
+                                .keyboardType(.decimalPad)
+                                .multilineTextAlignment(.trailing)
+                                .frame(width: 80)
+                        }
+
+                        Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
+                            if let produit = produitChoisi {
+                                ingredients.append((produit: produit, quantite: quantiteChoisie))
+                                produitChoisi = nil
+                                quantiteChoisie = 1.0
+                            }
+                        }
+                        .disabled(produitChoisi == nil)
+                    }
+                }
+ 
+                
+                Section("Lien vers la recette") {
+                    TextField("URL ou chemin de fichier", text: $lienTexte)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+                
                 Section("Saisons") {
                     ForEach(Saison.allCases) { saison in
                         HStack {
@@ -407,56 +502,8 @@ struct EditRecetteView: View {
                     }
                 }
 
-                Section("Lien vers la recette") {
-                    TextField("URL ou chemin de fichier", text: $lienTexte)
-                        .keyboardType(.URL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                }
+ 
 
-                Section("Ingrédients") {
-                    ForEach(ingredients.indices, id: \.self) { index in
-                        HStack {
-                            Text(ingredients[index].produit.nom)
-                            Spacer()
-                            Text(ingredients[index].quantite.formatted())
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    .onDelete { indices in
-                        ingredients.remove(atOffsets: indices)
-                    }
-
-                    if tousLesProduits.isEmpty {
-                        Text("Aucun produit disponible. Crée d'abord des produits.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Picker("Produit", selection: $produitChoisi) {
-                            Text("Choisir…").tag(Produit?.none)
-                            ForEach(tousLesProduits) { produit in
-                                Text(produit.nom).tag(Optional(produit))
-                            }
-                        }
-
-                        HStack {
-                            Text("Quantité")
-                            Spacer()
-                            TextField("Quantité", value: $quantiteChoisie, format: .number)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
-                        }
-
-                        Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
-                            if let produit = produitChoisi {
-                                ingredients.append((produit: produit, quantite: quantiteChoisie))
-                                produitChoisi = nil
-                                quantiteChoisie = 1.0
-                            }
-                        }
-                        .disabled(produitChoisi == nil)
-                    }
-                }
             }
             .navigationTitle("Modifier la recette")
             .navigationBarTitleDisplayMode(.inline)
@@ -469,6 +516,8 @@ struct EditRecetteView: View {
                         .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
+            .font(.subheadline)
+
         }
     }
 

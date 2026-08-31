@@ -29,9 +29,15 @@ struct ProduitListView: View {
 
     var body: some View {
         List {
-            ForEach(produits.indices, id: \.self) { index in
-                produitRow(produits[index])
+            LazyVGrid(
+                columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
+                spacing: 12
+            ) {
+                ForEach(produits) { produit in
+                    produitRow(produit)
+                }
             }
+            .padding(.vertical, 8)
         }
         .navigationTitle("Produits")
         .toolbar {
@@ -77,45 +83,49 @@ struct ProduitListView: View {
 
     @ViewBuilder
     private func produitRow(_ produit: Produit) -> some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(produit.nom)
-                if !produit.tags.isEmpty {
-                    HStack(spacing: 6) {
-                        ForEach(produit.tags) { tag in
-                            HStack(spacing: 3) {
-                                Circle()
-                                    .fill(Color(hex: tag.couleurHex))
-                                    .frame(width: 8, height: 8)
-                                Text(tag.nom)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+        VStack(spacing: 6) {
+            Text(produit.nom)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+
+            if !produit.tags.isEmpty {
+                HStack(spacing: 3) {
+                    ForEach(produit.tags) { tag in
+                        Circle()
+                            .fill(Color(hex: tag.couleurHex))
+                            .frame(width: 8, height: 8)
                     }
                 }
             }
 
-            Spacer()
+            HStack(spacing: 14) {
+                Button {
+                    produitAEditer = produit
+                } label: {
+                    Image(systemName: "pencil")
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Modifier le produit \(produit.nom)")
 
-            Button {
-                produitAEditer = produit
-            } label: {
-                Image(systemName: "pencil")
+                Button {
+                    produitASupprimer = produit
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(estProduitUtilise(produit) ? Color.secondary : Color.red)
+                .disabled(estProduitUtilise(produit))
+                .accessibilityLabel(Text("Supprimer le produit"))
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Modifier le produit \(produit.nom)")
-
-            Button {
-                produitASupprimer = produit
-            } label: {
-                Image(systemName: "trash")
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(estProduitUtilise(produit) ? Color.secondary : Color.red)
-            .disabled(estProduitUtilise(produit))
-            .accessibilityLabel(Text("Supprimer le produit"))
         }
+        .frame(maxWidth: .infinity, minHeight: 60)
+        .padding(8)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.secondarySystemBackground))
+        )
     }
 
     private func estProduitUtilise(_ produit: Produit) -> Bool {

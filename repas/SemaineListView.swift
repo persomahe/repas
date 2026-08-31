@@ -29,10 +29,29 @@ struct SemaineListView: View {
             ForEach(semaines) { semaine in
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
-                        // Date de la semaine
-                        Label(semaine.date.formatted(date: .complete, time: .omitted), systemImage: "calendar")
-                            .font(.headline)
+                        HStack {
+                            // Date de la semaine
+                            Label(semaine.date.formatted(date: .complete, time: .omitted), systemImage: "calendar")
+                                .font(.headline)
+                            Spacer()
 
+                            Button {
+                                semaineAEditer = semaine
+                            } label: {
+                                Image(systemName: "pencil")
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("Modifier la semaine du \(semaine.date.formatted(date: .abbreviated, time: .omitted))")
+
+                            Button {
+                                semaineASupprimer = semaine
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color.red)
+                            .accessibilityLabel("Supprimer la semaine")
+                        }
                         // Nombre total de parts à préparer
                         Label("\(semaine.nombreTotalDeParts) parts à préparer", systemImage: "person.2")
                             .font(.subheadline)
@@ -52,26 +71,7 @@ struct SemaineListView: View {
                     }
 
                     // Actions : consultation / modification et suppression
-                    HStack {
-                        Spacer()
 
-                        Button {
-                            semaineAEditer = semaine
-                        } label: {
-                            Image(systemName: "pencil")
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Modifier la semaine du \(semaine.date.formatted(date: .abbreviated, time: .omitted))")
-
-                        Button {
-                            semaineASupprimer = semaine
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(Color.red)
-                        .accessibilityLabel("Supprimer la semaine")
-                    }
                 }
             }
         }
