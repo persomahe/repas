@@ -268,5 +268,5 @@ extension Color {
     NavigationStack {
         TagListView()
     }
-    .modelContainer(for: Tag.self, inMemory: true)
+    .modelContainer(PreviewData.container())
 }

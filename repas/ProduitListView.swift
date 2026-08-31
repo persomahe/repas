@@ -313,12 +313,12 @@ struct EditProduitView: View {
     NavigationStack {
         ProduitListView()
     }
-    .modelContainer(for: [Tag.self, Produit.self], inMemory: true)
+    .modelContainer(PreviewData.container())
 }
 
 #Preview {
     NavigationStack {
-        EditProduitView(produit: Produit(nom: "Tomate"))
+        EditProduitView(produit: Produit(nom: "Tomates"))
     }
-    .modelContainer(for: [Tag.self, Produit.self], inMemory: true)
+    .modelContainer(PreviewData.container())
 }

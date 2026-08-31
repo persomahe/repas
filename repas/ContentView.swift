@@ -99,4 +99,5 @@ private struct CourseDestinationView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(PreviewData.container())
 }

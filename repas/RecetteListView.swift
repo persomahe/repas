@@ -494,5 +494,5 @@ struct EditRecetteView: View {
     NavigationStack {
         RecetteListView()
     }
-    .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self], inMemory: true)
+    .modelContainer(PreviewData.container())
 }

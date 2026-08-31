@@ -190,7 +190,7 @@ private struct IngredientCard: View {
 
 #Preview {
     NavigationStack {
-        CourseListView(course: Course(semaine: Semaine(date: .now)))
+        PreviewCourseView()
     }
-    .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self, Course.self, IngredientCourse.self], inMemory: true)
+    .modelContainer(PreviewData.container())
 }

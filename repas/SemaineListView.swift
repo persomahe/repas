@@ -311,5 +311,5 @@ struct EditSemaineView: View {
     NavigationStack {
         SemaineListView()
     }
-    .modelContainer(for: [Tag.self, Produit.self, Recette.self, IngredientRecette.self, Semaine.self, RecetteSemaine.self], inMemory: true)
+    .modelContainer(PreviewData.container())
 }
