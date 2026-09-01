@@ -27,18 +27,31 @@ struct ProduitListView: View {
     /// Produit sélectionné pour suppression (avec confirmation).
     @State private var produitASupprimer: Produit?
 
+    /// Texte saisi dans le filtre par nom.
+    @State private var rechercheNom = ""
+
+    /// Produits correspondant au nom recherché.
+    private var produitsFiltres: [Produit] {
+        let texte = rechercheNom.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !texte.isEmpty else { return produits }
+        return produits.filter { produit in
+            produit.nom.localizedCaseInsensitiveContains(texte)
+        }
+    }
+
     var body: some View {
         List {
             LazyVGrid(
                 columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
                 spacing: 12
             ) {
-                ForEach(produits) { produit in
+                ForEach(produitsFiltres) { produit in
                     produitRow(produit)
                 }
             }
             .padding(.vertical, 8)
         }
+        .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
         .navigationTitle("Produits")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -71,11 +84,15 @@ struct ProduitListView: View {
             Text(suppressionMessage)
         }
         .overlay {
-            if produits.isEmpty {
+            if produitsFiltres.isEmpty {
                 ContentUnavailableView(
-                    "Aucun produit",
-                    systemImage: "carrot",
-                    description: Text("Les produits que tu créeras apparaîtront ici.")
+                    produits.isEmpty ? "Aucun produit" : "Aucun résultat",
+                    systemImage: produits.isEmpty ? "carrot" : "magnifyingglass",
+                    description: Text(
+                        produits.isEmpty
+                        ? "Les produits que tu créeras apparaîtront ici."
+                        : "Aucun produit ne correspond à cette recherche."
+                    )
                 )
             }
         }

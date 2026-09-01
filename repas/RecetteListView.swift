@@ -15,6 +15,13 @@ struct RecetteListView: View {
     /// Récupère automatiquement toutes les recettes, triées par nom
     @Query(sort: \Recette.nom) private var recettes: [Recette]
 
+    /// Tags disponibles pour le filtre.
+    @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
+
+    @State private var recherche = ""
+    @State private var tagSelectionne: Tag?
+    @State private var saisonSelectionnee: Saison?
+
     /// Contrôle l'affichage de la fiche de création d'une recette
     @State private var ajoutEnCours = false
 
@@ -24,14 +31,74 @@ struct RecetteListView: View {
     /// Recette sélectionnée pour suppression (avec confirmation).
     @State private var recetteASupprimer: Recette?
 
+    private var recettesFiltrees: [Recette] {
+        recettes.filter { recette in
+            let texte = recherche.trimmingCharacters(in: .whitespacesAndNewlines)
+            let correspondAuTexte = texte.isEmpty
+                || recette.nom.localizedCaseInsensitiveContains(texte)
+                || recette.ingredients.contains { ingredient in
+                    ingredient.produit?.nom.localizedCaseInsensitiveContains(texte) == true
+                }
+            let correspondAuTag = tagSelectionne.map { tag in
+                recette.tags.contains { $0.persistentModelID == tag.persistentModelID }
+            } ?? true
+            let correspondALaSaison = saisonSelectionnee.map { saison in
+                recette.saisons.contains(saison)
+            } ?? true
+            return correspondAuTexte && correspondAuTag && correspondALaSaison
+        }
+    }
+
     var body: some View {
         List {
-            ForEach(recettes.indices, id: \.self) { index in
-                recetteRow(recettes[index])
+            ForEach(recettesFiltrees.indices, id: \.self) { index in
+                recetteRow(recettesFiltrees[index])
             }
         }
+        .searchable(text: $recherche, prompt: "Nom ou produit")
         .navigationTitle("Recettes")
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Section("Tags") {
+                        Button {
+                            tagSelectionne = nil
+                        } label: {
+                            Label("Tous les tags", systemImage: tagSelectionne == nil ? "checkmark" : "tag")
+                        }
+                        ForEach(tousLesTags) { tag in
+                            Button {
+                                tagSelectionne = tag
+                            } label: {
+                                tagFilterLabel(for: tag)
+                            }
+                        }
+                    }
+                    Section("Saisons") {
+                        Button {
+                            saisonSelectionnee = nil
+                        } label: {
+                            Label("Toutes les saisons", systemImage: saisonSelectionnee == nil ? "checkmark" : "calendar")
+                        }
+                        ForEach(Saison.allCases) { saison in
+                            Button {
+                                saisonSelectionnee = saison
+                            } label: {
+                                saisonFilterLabel(for: saison)
+                            }
+                        }
+                    }
+                } label: {
+                    let filtreActif = tagSelectionne != nil || saisonSelectionnee != nil
+                    Label(
+                        "Filtrer",
+                        systemImage: filtreActif
+                            ? "line.3.horizontal.decrease.circle.fill"
+                            : "line.3.horizontal.decrease.circle"
+                    )
+                }
+            }
+
             ToolbarItem(placement: .primaryAction) {
                 Button("Ajouter une recette", systemImage: "plus") {
                     ajoutEnCours = true
@@ -62,11 +129,11 @@ struct RecetteListView: View {
             Text(suppressionMessage)
         }
         .overlay {
-            if recettes.isEmpty {
+            if recettesFiltrees.isEmpty {
                 ContentUnavailableView(
-                    "Aucune recette",
-                    systemImage: "book",
-                    description: Text("Les recettes que tu créeras apparaîtront ici.")
+                    recettes.isEmpty ? "Aucune recette" : "Aucun résultat",
+                    systemImage: recettes.isEmpty ? "book" : "magnifyingglass",
+                    description: Text(recettes.isEmpty ? "Les recettes que tu créeras apparaîtront ici." : "Aucune recette ne correspond aux filtres sélectionnés.")
                 )
             }
         }
@@ -127,6 +194,16 @@ struct RecetteListView: View {
             .foregroundStyle(Color.red)
             .accessibilityLabel(Text("Supprimer la recette"))
         }
+    }
+
+    private func tagFilterLabel(for tag: Tag) -> some View {
+        let selectionnee = tagSelectionne?.persistentModelID == tag.persistentModelID
+        return Label(tag.nom, systemImage: selectionnee ? "checkmark" : "tag")
+    }
+
+    private func saisonFilterLabel(for saison: Saison) -> some View {
+        let selectionnee = saisonSelectionnee == saison
+        return Label(saison.rawValue, systemImage: selectionnee ? "checkmark" : "calendar")
     }
 
     private var suppressionDialogBinding: Binding<Bool> {
@@ -362,7 +439,7 @@ struct EditRecetteView: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.borderless)
+                        .buttonStyle(.plain)
 
                         Text("\(nombreDeParts)")
                             .monospacedDigit()
@@ -385,7 +462,7 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "minus.circle")
                          }
-                         .buttonStyle(.borderless)
+                         .buttonStyle(.plain)
 
                          Text("\(tempsPreparationMinutes)")
                              .monospacedDigit()
@@ -396,16 +473,18 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "plus.circle")
                          }
-                         .buttonStyle(.borderless)
-                    }
-                }
+                         .buttonStyle(.plain)
+                     }
+                 }
 
-                Section("Ingrédients") {
-                    LazyVGrid(
-                        columns: [
-                            GridItem(.adaptive(minimum: 70), spacing: 12)
-                        ]                    ) {
-                        ForEach(ingredients.indices, id: \.self) { index in
+                 Section("Ingrédients") {
+                     LazyVGrid(
+                         columns: [
+                             GridItem(.adaptive(minimum: 70), spacing: 12)
+                         ],
+                         spacing: 12
+                     ) {
+                         ForEach(ingredients.indices, id: \.self) { index in
                             VStack(spacing: 6) {
                                 Text(ingredients[index].produit.nom)
                                     .font(.caption)
