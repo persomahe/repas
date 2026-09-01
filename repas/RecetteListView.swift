@@ -249,85 +249,87 @@ struct NouvelleRecetteView: View {
             Form {
                 Section {
                     TextField("Nom de la recette", text: $nom)
-                    Stepper("Parts : \(nombreDeParts)", value: $nombreDeParts, in: 1...50)
-                    Stepper("Préparation : \(tempsPreparationMinutes) min", value: $tempsPreparationMinutes, in: 0...600, step: 5)
-                }
+                        .fontWeight(.semibold)
+                    HStack {
+                        Text("Parts")
 
-                Section("Saisons") {
-                    ForEach(Saison.allCases) { saison in
-                        HStack {
-                            Text(saison.rawValue)
-                            Spacer()
-                            if saisonsChoisies.contains(saison) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.tint)
-                            }
+                        Button {
+                            nombreDeParts = max(1, nombreDeParts - 1)
+                        } label: {
+                            Image(systemName: "minus.circle")
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if saisonsChoisies.contains(saison) {
-                                saisonsChoisies.remove(saison)
-                            } else {
-                                saisonsChoisies.insert(saison)
-                            }
+                        .buttonStyle(.plain)
+
+                        Text("\(nombreDeParts)")
+                            .monospacedDigit()
+                            .frame(width: 20)
+
+                        Button {
+                            nombreDeParts = min(50, nombreDeParts + 1)
+                        } label: {
+                            Image(systemName: "plus.circle")
                         }
+                        .buttonStyle(.borderless)
+
+                        Spacer()
+
+                        Text("Préparation (min)")
+
+                        Button {
+                            tempsPreparationMinutes = max(0, tempsPreparationMinutes - 5)
+                        } label: {
+                            Image(systemName: "minus.circle")
+                        }
+                        .buttonStyle(.plain)
+
+                        Text("\(tempsPreparationMinutes)")
+                            .monospacedDigit()
+                            .frame(width: 30)
+
+                        Button {
+                            tempsPreparationMinutes = min(600, tempsPreparationMinutes + 5)
+                        } label: {
+                            Image(systemName: "plus.circle")
+                        }
+                        .buttonStyle(.plain)
                     }
-                }
-
-                Section("Tags") {
-                    if tousLesTags.isEmpty {
-                        Text("Aucun tag disponible.")
-                            .foregroundStyle(.secondary)
-                    } else {
-                        ForEach(tousLesTags) { tag in
-                            HStack {
-                                Circle()
-                                    .fill(Color(hex: tag.couleurHex))
-                                    .frame(width: 12, height: 12)
-                                Text(tag.nom)
-                                Spacer()
-                                if tagsChoisis.contains(tag) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                if tagsChoisis.contains(tag) {
-                                    tagsChoisis.remove(tag)
-                                } else {
-                                    tagsChoisis.insert(tag)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                Section("Lien vers la recette") {
-                    TextField("URL ou chemin de fichier", text: $lienTexte)
-                        .keyboardType(.URL)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
                 }
 
                 Section("Ingrédients") {
-                    ForEach(ingredients.indices, id: \.self) { index in
-                        HStack {
-                            Text(ingredients[index].produit.nom)
-                            Spacer()
-                            Text(ingredients[index].quantite.formatted())
-                                .foregroundStyle(.secondary)
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.adaptive(minimum: 70), spacing: 12)
+                        ],
+                        spacing: 12
+                    ) {
+                        ForEach(ingredients.indices, id: \.self) { index in
+                            VStack(spacing: 6) {
+                                Text(ingredients[index].produit.nom)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+
+                                Text(ingredients[index].quantite.formatted())
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.purple)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 70)
+                            .padding(8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.secondarySystemBackground))
+                            )
                         }
                     }
-                    .onDelete { indices in
-                        ingredients.remove(atOffsets: indices)
-                    }
+                    .padding(.vertical, 8)
 
                     if tousLesProduits.isEmpty {
                         Text("Aucun produit disponible. Crée d'abord des produits.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Produit", selection: $produitChoisi) {
+                        Picker("Ingrédient à ajouter", selection: $produitChoisi) {
                             Text("Choisir…").tag(Produit?.none)
                             ForEach(tousLesProduits) { produit in
                                 Text(produit.nom).tag(Optional(produit))
@@ -340,7 +342,6 @@ struct NouvelleRecetteView: View {
                             TextField("Quantité", value: $quantiteChoisie, format: .number)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
                         }
 
                         Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
@@ -351,6 +352,124 @@ struct NouvelleRecetteView: View {
                             }
                         }
                         .disabled(produitChoisi == nil)
+                    }
+                }
+
+                Section("Lien vers la recette") {
+                    TextField("URL ou chemin de fichier", text: $lienTexte)
+                        .keyboardType(.URL)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled()
+                }
+
+                Section("Saisons") {
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.adaptive(minimum: 70), spacing: 12)
+                        ],
+                        spacing: 12
+                    ) {
+                        ForEach(Saison.allCases) { saison in
+                            let saisonSelectionnee = saisonsChoisies.contains(saison)
+
+                            Button {
+                                if saisonSelectionnee {
+                                    saisonsChoisies.remove(saison)
+                                } else {
+                                    saisonsChoisies.insert(saison)
+                                }
+                            } label: {
+                                VStack(spacing: 8) {
+                                    Image(systemName: saisonSelectionnee ? "checkmark.circle.fill" : "circle")
+                                        .font(.title3)
+                                        .foregroundStyle(saisonSelectionnee ? Color.accentColor : Color.secondary)
+
+                                    Text(saison.rawValue)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .multilineTextAlignment(.center)
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 70)
+                                .padding(8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(saisonSelectionnee ? Color.accentColor.opacity(0.15) : Color(.secondarySystemBackground))
+                                )
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(saisonSelectionnee ? Color.accentColor : Color.clear, lineWidth: 1)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+
+                Section("Tags") {
+                    if tousLesTags.isEmpty {
+                        Text("Aucun tag disponible.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        LazyVGrid(
+                            columns: [
+                                GridItem(.adaptive(minimum: 90), spacing: 12)
+                            ],
+                            spacing: 12
+                        ) {
+                            ForEach(tousLesTags) { tag in
+                                let tagSelectionne = tagsChoisis.contains(tag)
+
+                                Button {
+                                    if tagSelectionne {
+                                        tagsChoisis.remove(tag)
+                                    } else {
+                                        tagsChoisis.insert(tag)
+                                    }
+                                } label: {
+                                    VStack(spacing: 8) {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 24, height: 24)
+                                            .overlay {
+                                                if tagSelectionne {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.caption)
+                                                        .fontWeight(.bold)
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }
+
+                                        Text(tag.nom)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: 70)
+                                    .padding(8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(
+                                                tagSelectionne
+                                                ? Color.accentColor.opacity(0.15)
+                                                : Color(.secondarySystemBackground)
+                                            )
+                                    )
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                tagSelectionne
+                                                ? Color.accentColor
+                                                : Color.clear,
+                                                lineWidth: 1
+                                            )
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                        .padding(.vertical, 8)
                     }
                 }
             }
@@ -365,6 +484,7 @@ struct NouvelleRecetteView: View {
                         .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
+            .font(.subheadline)
         }
     }
 
@@ -603,32 +723,67 @@ struct EditRecetteView: View {
                         Text("Aucun tag disponible.")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(tousLesTags) { tag in
-                            HStack {
-                                Circle()
-                                    .fill(Color(hex: tag.couleurHex))
-                                    .frame(width: 12, height: 12)
-                                Text(tag.nom)
-                                Spacer()
-                                if tagsChoisis.contains(tag) {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(.tint)
+                        LazyVGrid(
+                            columns: [
+                                GridItem(.adaptive(minimum: 90), spacing: 12)
+                            ],
+                            spacing: 12
+                        ) {
+                            ForEach(tousLesTags) { tag in
+                                let tagSelectionne = tagsChoisis.contains(tag)
+
+                                Button {
+                                    if tagSelectionne {
+                                        tagsChoisis.remove(tag)
+                                    } else {
+                                        tagsChoisis.insert(tag)
+                                    }
+                                } label: {
+                                    VStack(spacing: 8) {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 24, height: 24)
+                                            .overlay {
+                                                if tagSelectionne {
+                                                    Image(systemName: "checkmark")
+                                                        .font(.caption)
+                                                        .fontWeight(.bold)
+                                                        .foregroundStyle(.white)
+                                                }
+                                            }
+
+                                        Text(tag.nom)
+                                            .font(.caption)
+                                            .fontWeight(.medium)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(2)
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: 70)
+                                    .padding(8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(
+                                                tagSelectionne
+                                                ? Color.accentColor.opacity(0.15)
+                                                : Color(.secondarySystemBackground)
+                                            )
+                                    )
+                                    .overlay {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .stroke(
+                                                tagSelectionne
+                                                ? Color.accentColor
+                                                : Color.clear,
+                                                lineWidth: 1
+                                            )
+                                    }
                                 }
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                if tagsChoisis.contains(tag) {
-                                    tagsChoisis.remove(tag)
-                                } else {
-                                    tagsChoisis.insert(tag)
-                                }
+                                .buttonStyle(.plain)
                             }
                         }
+                        .padding(.vertical, 8)
                     }
                 }
-
- 
-
             }
             .navigationTitle("Modifier la recette")
             .navigationBarTitleDisplayMode(.inline)
