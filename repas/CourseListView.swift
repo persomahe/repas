@@ -173,14 +173,14 @@ private struct IngredientCard: View {
     var body: some View {
         VStack(spacing: 6) {
             Text(nom)
-                .font(.subheadline)
+                .font(.caption)
                 .fontWeight(.medium)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
             Text(quantite.formatted(.number.precision(.fractionLength(0...2))))
                 .font(.subheadline)
                 .fontWeight(.medium)
-                .foregroundStyle(.tint)
+                .foregroundStyle(.purple)
         }
         .frame(maxWidth: .infinity, minHeight: 70)
         .padding(8)

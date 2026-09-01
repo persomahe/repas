@@ -362,7 +362,7 @@ struct EditRecetteView: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
 
                         Text("\(nombreDeParts)")
                             .monospacedDigit()
@@ -373,7 +373,7 @@ struct EditRecetteView: View {
                         } label: {
                             Image(systemName: "plus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
 
                         Spacer()
 
@@ -385,7 +385,7 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "minus.circle")
                          }
-                         .buttonStyle(.plain)
+                         .buttonStyle(.borderless)
 
                          Text("\(tempsPreparationMinutes)")
                              .monospacedDigit()
@@ -396,28 +396,43 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "plus.circle")
                          }
-                         .buttonStyle(.plain)
+                         .buttonStyle(.borderless)
                     }
                 }
 
                 Section("Ingrédients") {
-                    ForEach(ingredients.indices, id: \.self) { index in
-                        HStack {
-                            Text(ingredients[index].produit.nom)
-                            Spacer()
-                            Text(ingredients[index].quantite.formatted())
-                                .foregroundStyle(.secondary)
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.adaptive(minimum: 70), spacing: 12)
+                        ]                    ) {
+                        ForEach(ingredients.indices, id: \.self) { index in
+                            VStack(spacing: 6) {
+                                Text(ingredients[index].produit.nom)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                    .multilineTextAlignment(.center)
+                                    .lineLimit(2)
+
+                                Text(ingredients[index].quantite.formatted())
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundStyle(.purple)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 70)
+                            .padding(8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.secondarySystemBackground))
+                            )
                         }
                     }
-                    .onDelete { indices in
-                        ingredients.remove(atOffsets: indices)
-                    }
+                    .padding(.vertical, 8)
 
                     if tousLesProduits.isEmpty {
                         Text("Aucun produit disponible. Crée d'abord des produits.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Produit", selection: $produitChoisi) {
+                        Picker("Ingrédient à ajouter", selection: $produitChoisi) {
                             Text("Choisir…").tag(Produit?.none)
                             ForEach(tousLesProduits) { produit in
                                 Text(produit.nom).tag(Optional(produit))
@@ -430,7 +445,6 @@ struct EditRecetteView: View {
                             TextField("Quantité", value: $quantiteChoisie, format: .number)
                                 .keyboardType(.decimalPad)
                                 .multilineTextAlignment(.trailing)
-                                .frame(width: 80)
                         }
 
                         Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
@@ -453,24 +467,56 @@ struct EditRecetteView: View {
                 }
                 
                 Section("Saisons") {
-                    ForEach(Saison.allCases) { saison in
-                        HStack {
-                            Text(saison.rawValue)
-                            Spacer()
-                            if saisonsChoisies.contains(saison) {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.tint)
+                    LazyVGrid(
+                        columns: [
+                            GridItem(.adaptive(minimum: 70), spacing: 12)
+                        ],
+                        spacing: 12
+                    ) {
+                        ForEach(Saison.allCases) { saison in
+                            let saisonSelectionnee = saisonsChoisies.contains(saison)
+
+                            Button {
+                                if saisonSelectionnee {
+                                    saisonsChoisies.remove(saison)
+                                } else {
+                                    saisonsChoisies.insert(saison)
+                                }
+                            } label: {
+                                VStack(spacing: 8) {
+                                    Image(systemName: saisonSelectionnee ? "checkmark.circle.fill" : "circle")
+                                        .font(.title3)
+                                        .foregroundStyle(saisonSelectionnee ? Color.accentColor : Color.secondary)
+
+                                    Text(saison.rawValue)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                        .multilineTextAlignment(.center)
+                                }
+                                .frame(maxWidth: .infinity, minHeight: 70)
+                                .padding(8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(
+                                            saisonSelectionnee
+                                            ? Color.accentColor.opacity(0.15)
+                                            : Color(.secondarySystemBackground)
+                                        )
+                                )
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(
+                                            saisonSelectionnee
+                                            ? Color.accentColor
+                                            : Color.clear,
+                                            lineWidth: 1
+                                        )
+                                }
                             }
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if saisonsChoisies.contains(saison) {
-                                saisonsChoisies.remove(saison)
-                            } else {
-                                saisonsChoisies.insert(saison)
-                            }
+                            .buttonStyle(.plain)
                         }
                     }
+                    .padding(.vertical, 8)
                 }
 
                 Section("Tags") {
@@ -534,14 +580,40 @@ struct EditRecetteView: View {
         recette.tags = Array(tagsChoisis)
         recette.lien = lienNettoye.isEmpty ? nil : URL(string: lienNettoye)
         recette.tempsPreparationMinutes = tempsPreparationMinutes
-        recette.ingredients = ingredients.map { IngredientRecette(produit: $0.produit, quantite: $0.quantite) }
+        recette.ingredients = ingredients.map { ingredient in
+            IngredientRecette(
+                produit: ingredient.produit,
+                quantite: ingredient.quantite
+            )
+        }
         dismiss()
     }
 }
 
-#Preview {
+#Preview("Liste des recettes") {
     NavigationStack {
         RecetteListView()
+    }
+    .modelContainer(PreviewData.container())
+}
+
+private struct EditRecettePreviewContainer: View {
+    @Query(sort: \Recette.nom) private var recettes: [Recette]
+
+    var body: some View {
+        Group {
+            if let recette = recettes.first {
+                EditRecetteView(recette: recette)
+            } else {
+                ProgressView("Chargement de la recette…")
+            }
+        }
+    }
+}
+
+#Preview("Modifier une recette") {
+    NavigationStack {
+        EditRecettePreviewContainer()
     }
     .modelContainer(PreviewData.container())
 }
