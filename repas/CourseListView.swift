@@ -18,8 +18,20 @@ struct CourseListView: View {
     /// Tous les produits existants, pour la liste "à prendre"
     @Query(sort: \Produit.nom) private var produits: [Produit]
 
-    /// Ingrédients "à prendre" saisis par l'utilisateur (non encore enregistrés dans la course)
-    @State private var aPrendre: [IngredientCourse] = []
+    /// Tags disponibles pour filtrer les produits.
+    @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
+
+    /// Tag sélectionné pour la section « À prendre ».
+    @State private var tagSelectionne: Tag?
+
+    private var produitsFiltres: [Produit] {
+        guard let tagSelectionne else { return produits }
+        return produits.filter { produit in
+            produit.tags.contains { tag in
+                tag.persistentModelID == tagSelectionne.persistentModelID
+            }
+        }
+    }
 
     /// Ingrédients déjà ajoutés, fusionnés par produit
     private var dejaAjoutes: [IngredientAgrege] {
@@ -76,28 +88,12 @@ struct CourseListView: View {
                 LazyVGrid(
                     columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
                     ForEach(dejaAjoutes) { ingredient in
-                        IngredientCard(
-                            nom: ingredient.produit.nom,
-                            quantite: ingredient.quantite
-                        )
-                    }
-                }
-            }
-
-            // Section "À prendre"
-            SectionHeader(title: "À prendre", systemImage: "plus.circle")
-            if produits.isEmpty {
-                Text("Aucun produit disponible. Crée d'abord des produits.")
-                    .foregroundStyle(.secondary)
-            } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                    ForEach(produits) { produit in
                         Button {
-                            ajouterAprendre(produit)
+                            retirerDuPanier(ingredient.produit)
                         } label: {
                             IngredientCard(
-                                nom: produit.nom,
-                                quantite: quantitePour(produit)
+                                nom: ingredient.produit.nom,
+                                quantite: ingredient.quantite
                             )
                         }
                         .buttonStyle(.plain)
@@ -105,44 +101,116 @@ struct CourseListView: View {
                 }
             }
 
-            if !aPrendre.isEmpty {
-                Button("Ajouter à la course", systemImage: "cart.badge.plus") {
-                    enregistrerAprendre()
+            // Section "À prendre"
+            HStack {
+                SectionHeader(title: "À prendre", systemImage: "plus.circle")
+
+                Spacer()
+
+                Menu {
+                    Button {
+                        tagSelectionne = nil
+                    } label: {
+                        Label(
+                            "Tous les produits",
+                            systemImage: tagSelectionne == nil ? "checkmark" : "line.3.horizontal.decrease.circle"
+                        )
+                    }
+
+                    ForEach(tousLesTags) { tag in
+                        Button {
+                            tagSelectionne = tag
+                        } label: {
+                            Label(
+                                tag.nom,
+                                systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID
+                                    ? "checkmark"
+                                    : "tag"
+                            )
+                        }
+                    }
+                } label: {
+                    Label(
+                        tagSelectionne?.nom ?? "Tous",
+                        systemImage: tagSelectionne == nil
+                            ? "line.3.horizontal.decrease.circle"
+                            : "line.3.horizontal.decrease.circle.fill"
+                    )
+                    .font(.caption)
                 }
-                .buttonStyle(.borderedProminent)
-                .frame(maxWidth: .infinity)
+            }
+            .padding(.vertical, 4)
+
+            if produitsFiltres.isEmpty {
+                Text(
+                    produits.isEmpty
+                    ? "Aucun produit disponible. Crée d'abord des produits."
+                    : "Aucun produit avec ce tag."
+                )
+                .foregroundStyle(.secondary)
+            } else {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
+                    ForEach(produitsFiltres) { produit in
+                        Button {
+                            ajouterAprendre(produit)
+                        } label: {
+                            IngredientCard(
+                                nom: produit.nom,
+                                quantite: 1
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .task {
+            guard tagSelectionne == nil else { return }
+            tagSelectionne = tousLesTags.first { tag in
+                tag.nom.compare("Récurrent", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
             }
         }
 
         .navigationTitle("Liste de courses")
     }
 
-    /// Quantité affichée pour un produit "à prendre" (1 par défaut, doublée à chaque clic).
-    private func quantitePour(_ produit: Produit) -> Double {
-        aPrendre.first { $0.produit === produit }?.quantite ?? 1
-    }
-
-    /// Clic sur un produit "à prendre" : double la quantité s'il est déjà présent, sinon l'ajoute avec qté 1.
+    /// Clic sur un produit : ajoute immédiatement 1 unité à la course.
     private func ajouterAprendre(_ produit: Produit) {
-        if let index = aPrendre.firstIndex(where: { $0.produit === produit }) {
-            aPrendre[index].quantite *= 2
-        } else {
-            aPrendre.append(IngredientCourse(produit: produit, quantite: 1))
-        }
-    }
-
-    /// Enregistre les ingrédients "à prendre" dans la course puis vide la liste.
-    private func enregistrerAprendre() {
         guard course.modelContext != nil else {
-            assertionFailure("Impossible d'enregistrer: la Course n'est pas attachée au ModelContext")
+            assertionFailure("Impossible d'ajouter: la Course n'est pas attachée au ModelContext")
             return
         }
 
-        for ingredient in aPrendre {
-            modelContext.insert(ingredient)
-            course.ingredients.append(ingredient)
+        if let ingredientExistant = course.ingredients.first(where: { $0.produit === produit }) {
+            ingredientExistant.quantite += 1
+        } else {
+            let nouvelIngredient = IngredientCourse(
+                course: course,
+                produit: produit,
+                quantite: 1
+            )
+            modelContext.insert(nouvelIngredient)
+            course.ingredients.append(nouvelIngredient)
         }
-        aPrendre = []
+    }
+
+    /// Retire une unité du produit cliqué et supprime sa ligne à zéro.
+    private func retirerDuPanier(_ produit: Produit) {
+        guard course.modelContext != nil else {
+            assertionFailure("Impossible de retirer: la Course n'est pas attachée au ModelContext")
+            return
+        }
+
+        guard let ingredient = course.ingredients.first(where: { $0.produit === produit }) else {
+            return
+        }
+
+        if ingredient.quantite > 1 {
+            ingredient.quantite -= 1
+        } else {
+            modelContext.delete(ingredient)
+            course.ingredients.removeAll { $0.persistentModelID == ingredient.persistentModelID }
+        }
     }
 }
 
