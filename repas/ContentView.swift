@@ -21,8 +21,34 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Application REPAS")
+            VStack(spacing: 12) {
+                NavigationLink("Planifier ma semaine") {
+                    SemaineListView()
+                }
+                .buttonStyle(CarteButtonStyle(couleur: .orange))
+
+                NavigationLink("Ma liste de courses") {
+                    if let semaine = derniereSemaine {
+                        CourseDestinationView(semaine: semaine)
+                    } else {
+                        Text("Aucune semaine planifiée.")
+                    }
+                }
+                .buttonStyle(CarteButtonStyle(couleur: .green))
+                
+                Spacer()
+                
+                NavigationLink("Voir les recettes") {
+                    RecetteListView()
+                }
+                .buttonStyle(CarteButtonStyle(couleur: .purple))
+
+                Spacer()
+                
+                Text("Paramètres")
+                .padding(.top)
+                .font(.subheadline)
+                .fontWeight(.regular)
 
                 NavigationLink("Voir les tags") {
                     TagListView()
@@ -35,30 +61,48 @@ struct ContentView: View {
                 }
                 .buttonStyle(.borderedProminent)
 
-                NavigationLink("Voir les recettes") {
-                    RecetteListView()
-                }
-                .buttonStyle(.borderedProminent)
-
-                NavigationLink("Planifier ma semaine") {
-                    SemaineListView()
-                }
-                .buttonStyle(.borderedProminent)
-
-                NavigationLink("Ma liste de courses") {
-                    if let semaine = derniereSemaine {
-                        CourseDestinationView(semaine: semaine)
-                    } else {
-                        Text("Aucune semaine planifiée.")
-                    }
-                }
-                .buttonStyle(.borderedProminent)
             }
             .padding()
-            .navigationTitle("REPAS")
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Gestion des repas")
+                        .font(.system(size: 36, weight: .bold))
+                }
+            }
+            .fontWeight(.bold)
+
         }
+        
+    }
+    
+}
+
+//Création d'un style de bouton personnalisé pour les cartes
+struct CarteButtonStyle: ButtonStyle {
+    let couleur: Color
+        let couleurAppui: Color
+
+        init(couleur: Color, couleurAppui: Color? = nil) {
+            self.couleur = couleur
+            self.couleurAppui = couleurAppui ?? couleur.opacity(0.7)
+        }
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(
+                width: 200,
+                height: 60,
+                alignment: .center
+            )
+            .multilineTextAlignment(.center)
+            .padding()
+            .background(configuration.isPressed ? .gray : couleur)
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .font(.title2)
     }
 }
+
 
 /// Prépare une course gérée par SwiftData pour la semaine puis affiche la liste.
 private struct CourseDestinationView: View {
