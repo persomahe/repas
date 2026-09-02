@@ -12,8 +12,8 @@ import SwiftData
 struct SemaineListView: View {
     @Environment(\.modelContext) private var context
 
-    /// Récupère automatiquement toutes les semaines, triées par date
-    @Query(sort: \Semaine.date) private var semaines: [Semaine]
+    /// Récupère automatiquement toutes les semaines, de la plus récente à la plus ancienne
+    @Query(sort: \Semaine.date, order: .reverse) private var semaines: [Semaine]
 
     /// Contrôle l'affichage de la fiche de planification
     @State private var planificationEnCours = false
@@ -53,7 +53,7 @@ struct SemaineListView: View {
                             .accessibilityLabel("Supprimer la semaine")
                         }
                         // Nombre total de parts à préparer
-                        Label("\(semaine.nombreTotalDeParts) parts à préparer", systemImage: "person.2")
+                        Label("\(semaine.nombreTotalDeParts) parts totales à préparer", systemImage: "person.2")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -65,13 +65,12 @@ struct SemaineListView: View {
                                 Text(recette.nom)
                                 Spacer()
                                 Text("\(planification.nombreDeParts) parts")
-                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
-
-                    // Actions : consultation / modification et suppression
-
+                    .foregroundStyle(.green)
+                    .fontWeight(.medium)
+                    
                 }
             }
         }
@@ -143,6 +142,18 @@ struct NouvelleSemaineView: View {
     @State private var date = Date()
     @State private var recettesChoisies: [Recette: Int] = [:]
 
+    /// Recette sélectionnée à ajouter à la semaine.
+    @State private var recetteChoisie: Recette?
+
+    /// Nombre de parts de la nouvelle recette.
+    @State private var nombreDePartsChoisi = 1
+
+    private var recettesSelectionnees: [Recette] {
+        toutesLesRecettes.filter { recette in
+            (recettesChoisies[recette] ?? 0) > 0
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -151,27 +162,65 @@ struct NouvelleSemaineView: View {
                 }
 
                 Section("Recettes") {
+                    ForEach(recettesSelectionnees) { recette in
+                        HStack {
+                            Text(recette.nom)
+                                .foregroundStyle(.green)
+                                .fontWeight(.medium)
+                            Spacer()
+                            Stepper(
+                                "\(recettesChoisies[recette] ?? 0) parts",
+                                value: Binding(
+                                    get: { recettesChoisies[recette] ?? 1 },
+                                    set: { recettesChoisies[recette] = $0 }
+                                ),
+                                in: 1...50
+                            )
+
+                            Button {
+                                recettesChoisies[recette] = nil
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.red)
+                            .accessibilityLabel("Retirer \(recette.nom) de la semaine")
+                        }
+                    }
+
                     if toutesLesRecettes.isEmpty {
                         Text("Aucune recette disponible. Crée d'abord des recettes.")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(toutesLesRecettes) { recette in
-                            HStack {
-                                Text(recette.nom)
-                                Spacer()
-                                Stepper(
-                                    "\(recettesChoisies[recette] ?? 0) parts",
-                                    value: Binding(
-                                        get: { recettesChoisies[recette] ?? 0 },
-                                        set: { recettesChoisies[recette] = $0 }
-                                    ),
-                                    in: 0...50
-                                )
+                        Picker("Recette", selection: $recetteChoisie) {
+                            Text("Choisir…").tag(Recette?.none)
+                            ForEach(toutesLesRecettes) { recette in
+                                Text(recette.nom).tag(Optional(recette))
                             }
                         }
+
+                        HStack {
+                            Text("Nombre de parts")
+                            Spacer()
+                            Stepper(
+                                "\(nombreDePartsChoisi)",
+                                value: $nombreDePartsChoisi,
+                                in: 1...50
+                            )
+                        }
+
+                        Button("Ajouter la recette", systemImage: "plus.circle") {
+                            if let recette = recetteChoisie {
+                                recettesChoisies[recette] = nombreDePartsChoisi
+                                recetteChoisie = nil
+                                nombreDePartsChoisi = 1
+                            }
+                        }
+                        .disabled(recetteChoisie == nil)
                     }
                 }
             }
+            .font(.subheadline)
             .navigationTitle("Planifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -235,6 +284,8 @@ struct EditSemaineView: View {
                     ForEach(recettesChoisies.indices, id: \.self) { index in
                         HStack {
                             Text(recettesChoisies[index].recette.nom)
+                            .foregroundStyle(.green)
+                            .fontWeight(.medium)
                             Spacer()
                             Stepper(
                                 "\(recettesChoisies[index].nombreDeParts) parts",
@@ -285,6 +336,7 @@ struct EditSemaineView: View {
                     }
                 }
             }
+            .font(.subheadline)
             .navigationTitle("Modifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
