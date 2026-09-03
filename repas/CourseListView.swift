@@ -79,7 +79,30 @@ struct CourseListView: View {
     }
 
     var body: some View {
-        List {
+        ZStack(alignment: .top) {
+            Color(hex: "#FEF6E7")
+                .ignoresSafeArea()
+
+            GeometryReader { geometry in
+                Ellipse()
+                    .fill(
+                        LinearGradient(
+                            colors: [.green, .mint],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(
+                        width: geometry.size.width * 1.4,
+                        height: 280
+                    )
+                    .offset(
+                        x: -geometry.size.width * 0.2,
+                        y: -36
+                    )
+            }
+            .ignoresSafeArea()
+            List {
             // Section "Déjà ajoutés"
             SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
             if dejaAjoutes.isEmpty {
@@ -182,15 +205,15 @@ struct CourseListView: View {
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color(hex: "#EBFAEE").ignoresSafeArea())
+        .background(.clear)
         .task {
             guard tagSelectionne == nil else { return }
             tagSelectionne = tousLesTags.first { tag in
                 tag.nom.compare("Récurrent", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
             }
         }
-
         .navigationTitle("Liste de courses")
+        }
     }
 
     /// Clic sur un produit : ajoute immédiatement 1 unité à la course.

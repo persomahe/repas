@@ -37,58 +37,82 @@ struct SemaineListView: View {
     @State private var semaineASupprimer: Semaine?
 
     var body: some View {
-        List {
-            ForEach(semaines) { semaine in
-                Section {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            // Date de la semaine
-                            Label(dateEnFrancais(semaine.date), systemImage: "calendar")
-                                .font(.headline)
-                            Spacer()
+        ZStack(alignment: .top) {
+                Color(hex: "#FEF6E7")
+                    .ignoresSafeArea()
 
-                            Button {
-                                semaineAEditer = semaine
-                            } label: {
-                                Image(systemName: "pencil")
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityLabel("Modifier la semaine du \(dateEnFrancais(semaine.date))")
-
-                            Button {
-                                semaineASupprimer = semaine
-                            } label: {
-                                Image(systemName: "trash")
-                            }
-                            .buttonStyle(.plain)
-                            .foregroundStyle(Color.red)
-                            .accessibilityLabel("Supprimer la semaine")
-                        }
-                        // Nombre total de parts à préparer
-                        Label("\(semaine.nombreTotalDeParts) parts totales à préparer", systemImage: "person.2")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    // Liste des recettes planifiées
-                    ForEach(semaine.recettes) { planification in
-                        if let recette = planification.recette {
+                GeometryReader { geometry in
+                    Ellipse()
+                        .fill(
+                            LinearGradient(
+                                colors: [.purple, .pink],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(
+                            width: geometry.size.width * 1.4,
+                            height: 280
+                        )
+                        .offset(
+                            x: -geometry.size.width * 0.2,
+                            y: -36
+                        )
+                }
+                .ignoresSafeArea()
+                List {
+                ForEach(semaines) { semaine in
+                    Section {
+                        VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(recette.nom)
+                                // Date de la semaine
+                                Label(dateEnFrancais(semaine.date), systemImage: "calendar")
+                                    .font(.headline)
                                 Spacer()
-                                Text("\(planification.nombreDeParts) parts")
+
+                                Button {
+                                    semaineAEditer = semaine
+                                } label: {
+                                    Image(systemName: "pencil")
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("Modifier la semaine du \(dateEnFrancais(semaine.date))")
+
+                                Button {
+                                    semaineASupprimer = semaine
+                                } label: {
+                                    Image(systemName: "trash")
+                                }
+                                .buttonStyle(.plain)
+                                .foregroundStyle(Color.red)
+                                .accessibilityLabel("Supprimer la semaine")
+                            }
+                            // Nombre total de parts à préparer
+                            Label("\(semaine.nombreTotalDeParts) parts totales à préparer", systemImage: "person.2")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        // Liste des recettes planifiées
+                        ForEach(semaine.recettes) { planification in
+                            if let recette = planification.recette {
+                                HStack {
+                                    Text(recette.nom)
+                                    Spacer()
+                                    Text("\(planification.nombreDeParts) parts")
+                                }
                             }
                         }
+                        .foregroundStyle(Color(hex: "#AF52DE"))
+                        .fontWeight(.medium)
+                        
                     }
-                    .foregroundStyle(Color(hex: "#AF52DE"))
-                    .fontWeight(.medium)
-                    
                 }
             }
         }
         .scrollContentBackground(.hidden)
         .background(Color(hex: "#F5EAFB").ignoresSafeArea())
-        .navigationTitle("Ma semaine")
+        .navigationTitle("Mes semaines")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Planifier ma semaine", systemImage: "plus") {

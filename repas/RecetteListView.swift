@@ -50,9 +50,34 @@ struct RecetteListView: View {
     }
 
     var body: some View {
-        List {
-            ForEach(recettesFiltrees.indices, id: \.self) { index in
-                recetteRow(recettesFiltrees[index])
+        ZStack(alignment: .top) {
+                Color(hex: "#FEF6E7")
+                    .ignoresSafeArea()
+
+                GeometryReader { geometry in
+                    Ellipse()
+                        .fill(
+                            LinearGradient(
+                                colors: [.orange, .pink],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(
+                            width: geometry.size.width * 1.4,
+                            height: 280
+                        )
+                        .offset(
+                            x: -geometry.size.width * 0.2,
+                            y: -36
+                        )
+                }
+                .ignoresSafeArea()
+            
+                List {
+                ForEach(recettesFiltrees.indices, id: \.self) { index in
+                    recetteRow(recettesFiltrees[index])
+                }
             }
         }
         .scrollContentBackground(.hidden)
