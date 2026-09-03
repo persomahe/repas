@@ -31,6 +31,8 @@ struct RecetteListView: View {
     /// Recette sélectionnée pour suppression (avec confirmation).
     @State private var recetteASupprimer: Recette?
 
+    @State private var afficherInformations = false
+
     private var recettesFiltrees: [Recette] {
         recettes.filter { recette in
             let texte = recherche.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -82,7 +84,7 @@ struct RecetteListView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color(hex: "#FEF6E7").ignoresSafeArea())
-        .searchable(text: $recherche, prompt: "Nom ou produit")
+        .searchable(text: $recherche, prompt: "Nom d'une recette ou d'un produit")
         .navigationTitle("Recettes")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -131,12 +133,76 @@ struct RecetteListView: View {
                     ajoutEnCours = true
                 }
             }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    afficherInformations = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .accessibilityLabel("Afficher les informations")
+            }
         }
         .sheet(isPresented: $ajoutEnCours) {
             NouvelleRecetteView()
         }
         .sheet(item: $recetteAEditer) { recette in
             EditRecetteView(recette: recette)
+        }
+        .sheet(isPresented: $afficherInformations) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("""
+                        - Les recettes ne contiennent que les ingrédients essentiels à la liste de courses : le sel, le poivre, l’ail, la sauce tomate… sont déjà dans les placards !")
+                        - Tagger les recettes est important pour pouvoir les filtrer.\n
+                        """)
+
+                        Text("Nouvelle recette → +")
+                            .font(.headline)
+
+                        Text("""
+                        - Entrer le nom de la recette.
+                        - Cliquer sur Recette\t\tÀ choisir…
+                        - Choisir un ingrédient.
+                        - Préciser la quantité correspondant au nombre de parts de la recette.
+                        - Cliquer sur Ajouter l’ingrédient.
+                        - Recommencer pour tous les ingrédients.
+                        - Cliquer sur Ajouter pour enregistrer la recette.
+                        - Spécifier les tags.\n
+                        """)
+
+                        Text("Modifier une recette")
+                            .font(.headline)
+
+                        Text("""
+                        - Cliquer sur le crayon à droite de la recette.
+                        - Modifier les informations souhaitées.
+                        - Cliquer sur Enregistrer pour enregistrer les modifications.\n
+                        """)
+
+                        Text("Supprimer une recette")
+                            .font(.headline)
+
+                        Text("""
+                        - Cliquer sur la poubelle à droite de la recette.
+                        - Confirmer la suppression.
+                        """)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .navigationTitle("Informations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fermer") {
+                            afficherInformations = false
+                        }
+                    }
+                }
+                .tint(.orange)
+            }
         }
         .confirmationDialog(
             "Supprimer cette recette ?",

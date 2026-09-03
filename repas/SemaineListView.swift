@@ -36,6 +36,8 @@ struct SemaineListView: View {
     /// Semaine sélectionnée pour suppression (avec confirmation).
     @State private var semaineASupprimer: Semaine?
 
+    @State private var afficherInformations = false
+
     var body: some View {
         ZStack(alignment: .top) {
                 Color(hex: "#FEF6E7")
@@ -119,12 +121,73 @@ struct SemaineListView: View {
                     planificationEnCours = true
                 }
             }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    afficherInformations = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .accessibilityLabel("Afficher les informations")
+            }
         }
         .sheet(isPresented: $planificationEnCours) {
             NouvelleSemaineView()
         }
         .sheet(item: $semaineAEditer) { semaine in
             EditSemaineView(semaine: semaine)
+        }
+        .sheet(isPresented: $afficherInformations) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Important")
+                            .font(.headline)
+                        Text("""
+                        - Une semaine à une date de début, mais pas de fin : vous pouvez avoir plusieurs planifications pour une même semaine calendaire.
+                        - La liste de courses prend auomatiquement la planification la plus récente.\n
+                        """)
+                        Text("Nouvelle planification → +")
+                            .font(.headline)
+                        Text("""
+                        - Choissez une date (par défaut, la date du jour).
+                        - Cliquez sur Recette\t\tA choisir...
+                        - Puis le nombre de part pour cette semaine : les ingrédients dans la liste de courses seront mis à jour en fonction de ce nombre de parts.
+                        -Et cliquez sur + Ajouter la recette.
+                        - Répétez l'opération pour ajouter plusieurs recettes à la semaine.
+                        - Enfin, enregistrez la semaine : elle sera ajoutée à la liste des semaines, et la liste de courses sera mise à jour automatiquement.\n
+                        """)
+                        Text("Modifier une Semaine planifiée")
+                            .font(.headline)
+
+                        Text("""
+                        - Cliquer sur le crayon à droite de la date.
+                        - Modifier les informations souhaitées.
+                        - Cliquer sur Enregistrer pour enregistrer les modifications.\n
+                        """)
+
+                        Text("Supprimer une Semaine planifiée")
+                            .font(.headline)
+
+                        Text("""
+                        - Cliquer sur la poubelle à droite de la date.
+                        - Confirmer la suppression.
+                        """)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .navigationTitle("Informations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fermer") {
+                            afficherInformations = false
+                        }
+                    }
+                }
+                .tint(.purple)
+            }
         }
         .confirmationDialog(
             "Supprimer cette semaine ?",
@@ -143,6 +206,7 @@ struct SemaineListView: View {
         } message: {
             Text(suppressionMessage)
         }
+        
         .overlay {
             if semaines.isEmpty {
                 VStack(spacing: 12) {

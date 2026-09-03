@@ -13,6 +13,7 @@ struct ContentView: View {
 
     /// Toutes les semaines, triées de la plus récente à la plus ancienne
     @Query(sort: \Semaine.date, order: .reverse) private var semaines: [Semaine]
+    @State private var afficherInformations = false
 
     /// La dernière semaine (la plus récente), si elle existe
     private var derniereSemaine: Semaine? {
@@ -97,9 +98,51 @@ struct ContentView: View {
                     Text("Gestion des repas")
                         .font(.system(size: 36, weight: .bold))
                 }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        afficherInformations = true
+                    } label: {
+                        Image(systemName: "questionmark.circle")
+                    }
+                    .accessibilityLabel("Afficher les informations")
+                }
             }
-            .fontWeight(.bold)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .sheet(isPresented: $afficherInformations) {
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("A faire avant toutes choses")
+                                .font(.headline)
+                            Text("""
+                            - Définir les tags.
+                            - Définir vos produits.
+                            - Créer vos recettes.\n
+                            """)
+                            Text("Ordre des opérations pour une liste de courses")
+                                .font(.headline)
+                            Text("""
+                            - Définissez vos recettes en cliquant sur le bouton orange.
+                            - Planifiez votre semaine.
+                            - Puis votre liste de courses :
+                            Elle héritera des ingrédients des recettes planifiées pour la semaine, auxquels vous pourrez ajouter des produits supplémentaires.
+                            """)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                    }
+                    .navigationTitle("Informations")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button("Fermer") {
+                                afficherInformations = false
+                            }
+                        }
+                    }
+                    .tint(.orange)
+                }
+            }
         }
         
     }
