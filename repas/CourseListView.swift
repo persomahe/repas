@@ -234,11 +234,37 @@ struct CourseListView: View {
             return
         }
 
+        let id = produit.persistentModelID
+        carteAnimee = id
+
         if ingredient.quantite > 1 {
-            ingredient.quantite -= 1
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
+                ingredient.quantite -= 1
+            }
+
+            reinitialiserAnimationCarte(id: id)
         } else {
-            modelContext.delete(ingredient)
-            course.ingredients.removeAll { $0.persistentModelID == ingredient.persistentModelID }
+            // Laisse le zoom être visible avant de retirer la dernière unité.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                guard course.ingredients.contains(where: { $0.produit === produit }) else {
+                    reinitialiserAnimationCarte(id: id)
+                    return
+                }
+
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
+                    modelContext.delete(ingredient)
+                    course.ingredients.removeAll { $0.persistentModelID == ingredient.persistentModelID }
+                }
+                reinitialiserAnimationCarte(id: id)
+            }
+        }
+    }
+
+    private func reinitialiserAnimationCarte(id: PersistentIdentifier) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+            if carteAnimee == id {
+                carteAnimee = nil
+            }
         }
     }
 }
