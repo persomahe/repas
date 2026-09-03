@@ -12,6 +12,18 @@ import SwiftData
 struct SemaineListView: View {
     @Environment(\.modelContext) private var context
 
+    private func dateEnFrancais(_ date: Date) -> String {
+        let dateFormatee = date.formatted(
+            .dateTime
+                .locale(Locale(identifier: "fr_FR"))
+                .weekday(.wide)
+                .day()
+                .month(.abbreviated)
+        )
+
+        return dateFormatee.prefix(1).uppercased() + dateFormatee.dropFirst()
+    }
+
     /// Récupère automatiquement toutes les semaines, de la plus récente à la plus ancienne
     @Query(sort: \Semaine.date, order: .reverse) private var semaines: [Semaine]
 
@@ -31,7 +43,7 @@ struct SemaineListView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             // Date de la semaine
-                            Label(semaine.date.formatted(date: .complete, time: .omitted), systemImage: "calendar")
+                            Label(dateEnFrancais(semaine.date), systemImage: "calendar")
                                 .font(.headline)
                             Spacer()
 
@@ -41,7 +53,7 @@ struct SemaineListView: View {
                                 Image(systemName: "pencil")
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Modifier la semaine du \(semaine.date.formatted(date: .abbreviated, time: .omitted))")
+                            .accessibilityLabel("Modifier la semaine du \(dateEnFrancais(semaine.date))")
 
                             Button {
                                 semaineASupprimer = semaine
@@ -109,11 +121,11 @@ struct SemaineListView: View {
         }
         .overlay {
             if semaines.isEmpty {
-                ContentUnavailableView(
-                    "Aucune semaine planifiée",
-                    systemImage: "calendar.badge.plus",
-                    description: Text("Planifie ta semaine pour voir ici la date, le nombre de parts et les recettes.")
-                )
+                VStack(spacing: 12) {
+                    Image(systemName: "calendar.badge.plus")
+                        .font(.system(size: 42))
+                        .foregroundStyle(Color(hex: "#AF52DE"))
+                }
             }
         }
     }
@@ -129,7 +141,7 @@ struct SemaineListView: View {
         guard let date = semaineASupprimer?.date else {
             return "Cette semaine sera supprimée définitivement."
         }
-        return "La semaine du \(date.formatted(date: .complete, time: .omitted)) sera supprimée définitivement."
+        return "La semaine du \(dateEnFrancais(date)) sera supprimée définitivement."
     }
 }
 
