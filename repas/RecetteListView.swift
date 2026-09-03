@@ -272,6 +272,19 @@ struct NouvelleRecetteView: View {
     @State private var produitChoisi: Produit?
     @State private var quantiteChoisie = 1.0
     @State private var afficherSelectionProduit = false
+    @State private var rechercheProduit = ""
+
+    private var produitsParTagFiltres: [(tag: Tag?, produits: [Produit])] {
+        let recherche = rechercheProduit.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !recherche.isEmpty else { return produitsParTag }
+
+        return produitsParTag.compactMap { groupe in
+            let produits = groupe.produits.filter {
+                $0.nom.localizedCaseInsensitiveContains(recherche)
+            }
+            return produits.isEmpty ? nil : (tag: groupe.tag, produits: produits)
+        }
+    }
 
     private var produitsParTag: [(tag: Tag?, produits: [Produit])] {
         var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, produits: [Produit])? in
@@ -387,9 +400,24 @@ struct NouvelleRecetteView: View {
                         HStack {
                             Text("Quantité")
                             Spacer()
-                            TextField("Quantité", value: $quantiteChoisie, format: .number)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
+
+                            Button {
+                                quantiteChoisie = max(1, quantiteChoisie - 1)
+                            } label: {
+                                Image(systemName: "minus.circle")
+                            }
+                            .buttonStyle(.borderless)
+
+                            Text(quantiteChoisie.formatted(.number.precision(.fractionLength(0...2))))
+                                .monospacedDigit()
+                                .frame(minWidth: 40)
+
+                            Button {
+                                quantiteChoisie += 1
+                            } label: {
+                                Image(systemName: "plus.circle")
+                            }
+                            .buttonStyle(.borderless)
                         }
 
                         Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
@@ -540,8 +568,8 @@ struct NouvelleRecetteView: View {
             .sheet(isPresented: $afficherSelectionProduit) {
                 NavigationStack {
                     List {
-                        ForEach(produitsParTag.indices, id: \.self) { index in
-                            let groupe = produitsParTag[index]
+                        ForEach(produitsParTagFiltres.indices, id: \.self) { index in
+                            let groupe = produitsParTagFiltres[index]
                             DisclosureGroup {
                                 ForEach(groupe.produits) { produit in
                                     Button {
@@ -587,6 +615,13 @@ struct NouvelleRecetteView: View {
                                 afficherSelectionProduit = false
                             }
                         }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        TextField("Rechercher un produit", text: $rechercheProduit)
+                            .textFieldStyle(.roundedBorder)
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(.thinMaterial)
                     }
                 }
             }
@@ -640,6 +675,18 @@ struct EditRecetteView: View {
     @State private var produitChoisi: Produit?
     @State private var quantiteChoisie = 1.0
     @State private var afficherSelectionProduit = false
+    @State private var rechercheProduit = ""
+
+    private var produitsParTagFiltres: [(tag: Tag?, produits: [Produit])] {
+        let recherche = rechercheProduit.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !recherche.isEmpty else { return produitsParTag }
+        return produitsParTag.compactMap { groupe in
+            let produits = groupe.produits.filter {
+                $0.nom.localizedCaseInsensitiveContains(recherche)
+            }
+            return produits.isEmpty ? nil : (tag: groupe.tag, produits: produits)
+        }
+    }
 
     private var produitsParTag: [(tag: Tag?, produits: [Produit])] {
         var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, produits: [Produit])? in
@@ -767,9 +814,24 @@ struct EditRecetteView: View {
                         HStack {
                             Text("Quantité")
                             Spacer()
-                            TextField("Quantité", value: $quantiteChoisie, format: .number)
-                                .keyboardType(.decimalPad)
-                                .multilineTextAlignment(.trailing)
+
+                            Button {
+                                quantiteChoisie = max(1, quantiteChoisie - 1)
+                            } label: {
+                                Image(systemName: "minus.circle")
+                            }
+                            .buttonStyle(.borderless)
+
+                            Text(quantiteChoisie.formatted(.number.precision(.fractionLength(0...2))))
+                                .monospacedDigit()
+                                .frame(minWidth: 40)
+
+                            Button {
+                                quantiteChoisie += 1
+                            } label: {
+                                Image(systemName: "plus.circle")
+                            }
+                            .buttonStyle(.borderless)
                         }
 
                         Button("Ajouter l'ingrédient", systemImage: "plus.circle") {
@@ -930,8 +992,8 @@ struct EditRecetteView: View {
             .sheet(isPresented: $afficherSelectionProduit) {
                 NavigationStack {
                     List {
-                        ForEach(produitsParTag.indices, id: \.self) { index in
-                            let groupe = produitsParTag[index]
+                        ForEach(produitsParTagFiltres.indices, id: \.self) { index in
+                            let groupe = produitsParTagFiltres[index]
                             DisclosureGroup {
                                 ForEach(groupe.produits) { produit in
                                     Button {
@@ -977,6 +1039,13 @@ struct EditRecetteView: View {
                                 afficherSelectionProduit = false
                             }
                         }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        TextField("Rechercher un produit", text: $rechercheProduit)
+                            .textFieldStyle(.roundedBorder)
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(.thinMaterial)
                     }
                 }
             }

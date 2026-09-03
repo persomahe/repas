@@ -176,6 +176,7 @@ struct NouvelleSemaineView: View {
 
     /// Toutes les recettes existantes, pour la sélection
     @Query(sort: \Recette.nom) private var toutesLesRecettes: [Recette]
+    @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     @State private var date = Date()
     @State private var recettesChoisies: [Recette: Int] = [:]
@@ -185,6 +186,37 @@ struct NouvelleSemaineView: View {
 
     /// Nombre de parts de la nouvelle recette.
     @State private var nombreDePartsChoisi = 1
+    @State private var afficherSelectionRecette = false
+    @State private var rechercheRecette = ""
+
+    private var recettesParTag: [(tag: Tag?, recettes: [Recette])] {
+        var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, recettes: [Recette])? in
+            let recettes = toutesLesRecettes.filter { recette in
+                recette.tags.contains { $0.persistentModelID == tag.persistentModelID }
+            }
+            return recettes.isEmpty ? nil : (tag: tag, recettes: recettes)
+        }
+
+        let recettesSansTag = toutesLesRecettes.filter { $0.tags.isEmpty }
+        if !recettesSansTag.isEmpty {
+            groupes.append((tag: nil, recettes: recettesSansTag))
+        }
+        return groupes
+    }
+
+    private var recettesParTagFiltrees: [(tag: Tag?, recettes: [Recette])] {
+        let recherche = rechercheRecette.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !recherche.isEmpty else { return recettesParTag }
+        return recettesParTag.compactMap { groupe in
+            let recettes = groupe.recettes.filter { recette in
+                recette.nom.localizedCaseInsensitiveContains(recherche)
+                || recette.ingredients.contains {
+                    $0.produit?.nom.localizedCaseInsensitiveContains(recherche) == true
+                }
+            }
+            return recettes.isEmpty ? nil : (tag: groupe.tag, recettes: recettes)
+        }
+    }
 
     private var recettesSelectionnees: [Recette] {
         toutesLesRecettes.filter { recette in
@@ -230,10 +262,14 @@ struct NouvelleSemaineView: View {
                         Text("Aucune recette disponible. Crée d'abord des recettes.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Recette", selection: $recetteChoisie) {
-                            Text("Choisir…").tag(Recette?.none)
-                            ForEach(toutesLesRecettes) { recette in
-                                Text(recette.nom).tag(Optional(recette))
+                        HStack {
+                            Text("Recette")
+                            Spacer()
+                            Button {
+                                afficherSelectionRecette = true
+                            } label: {
+                                Text(recetteChoisie?.nom ?? "À choisir…")
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color.purple)
                             }
                         }
 
@@ -272,6 +308,66 @@ struct NouvelleSemaineView: View {
                         .disabled(recettesChoisies.values.allSatisfy { $0 == 0 })
                 }
             }
+            .sheet(isPresented: $afficherSelectionRecette) {
+                NavigationStack {
+                    List {
+                        ForEach(recettesParTagFiltrees.indices, id: \.self) { index in
+                            let groupe = recettesParTagFiltrees[index]
+                            DisclosureGroup {
+                                ForEach(groupe.recettes) { recette in
+                                    Button {
+                                        recetteChoisie = recette
+                                        afficherSelectionRecette = false
+                                    } label: {
+                                        HStack {
+                                            Text(recette.nom)
+                                            Spacer()
+                                            if recetteChoisie?.persistentModelID == recette.persistentModelID {
+                                                Image(systemName: "checkmark")
+                                                    .foregroundStyle(.purple)
+                                            }
+                                        }
+                                    }
+                                    .foregroundStyle(.primary)
+                                }
+                            } label: {
+                                HStack {
+                                    if let tag = groupe.tag {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 10, height: 10)
+                                        Text(tag.nom)
+                                    } else {
+                                        Image(systemName: "tag.slash")
+                                            .foregroundStyle(.secondary)
+                                        Text("Sans tag")
+                                    }
+                                    Spacer()
+                                    Text("\(groupe.recettes.count)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Choisir une recette")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fermer") {
+                                afficherSelectionRecette = false
+                            }
+                        }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        TextField("Rechercher une recette", text: $rechercheRecette)
+                            .textFieldStyle(.roundedBorder)
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(.thinMaterial)
+                    }
+                }
+            }
         }
     }
 
@@ -294,6 +390,7 @@ struct EditSemaineView: View {
 
     /// Toutes les recettes existantes, pour la sélection
     @Query(sort: \Recette.nom) private var toutesLesRecettes: [Recette]
+    @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     @State private var date: Date
 
@@ -303,6 +400,37 @@ struct EditSemaineView: View {
     /// Saisie de la recette à ajouter
     @State private var recetteChoisie: Recette?
     @State private var nombreDePartsChoisi = 1
+    @State private var afficherSelectionRecette = false
+    @State private var rechercheRecette = ""
+
+    private var recettesParTag: [(tag: Tag?, recettes: [Recette])] {
+        var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, recettes: [Recette])? in
+            let recettes = toutesLesRecettes.filter { recette in
+                recette.tags.contains { $0.persistentModelID == tag.persistentModelID }
+            }
+            return recettes.isEmpty ? nil : (tag: tag, recettes: recettes)
+        }
+
+        let recettesSansTag = toutesLesRecettes.filter { $0.tags.isEmpty }
+        if !recettesSansTag.isEmpty {
+            groupes.append((tag: nil, recettes: recettesSansTag))
+        }
+        return groupes
+    }
+
+    private var recettesParTagFiltrees: [(tag: Tag?, recettes: [Recette])] {
+        let recherche = rechercheRecette.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !recherche.isEmpty else { return recettesParTag }
+        return recettesParTag.compactMap { groupe in
+            let recettes = groupe.recettes.filter { recette in
+                recette.nom.localizedCaseInsensitiveContains(recherche)
+                || recette.ingredients.contains {
+                    $0.produit?.nom.localizedCaseInsensitiveContains(recherche) == true
+                }
+            }
+            return recettes.isEmpty ? nil : (tag: groupe.tag, recettes: recettes)
+        }
+    }
 
     init(semaine: Semaine) {
         self.semaine = semaine
@@ -352,17 +480,25 @@ struct EditSemaineView: View {
                         Text("Aucune recette disponible. Crée d'abord des recettes.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Recette", selection: $recetteChoisie) {
-                            Text("Choisir…").tag(Recette?.none)
-                            ForEach(toutesLesRecettes) { recette in
-                                Text(recette.nom).tag(Optional(recette))
+                        HStack {
+                            Text("Recette")
+                            Spacer()
+                            Button {
+                                afficherSelectionRecette = true
+                            } label: {
+                                Text(recetteChoisie?.nom ?? "À choisir…")
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color.purple)
                             }
                         }
 
                         HStack {
                             Text("Nombre de parts")
                             Spacer()
-                            Stepper("\(nombreDePartsChoisi)", value: $nombreDePartsChoisi, in: 1...50)
+                            Stepper(
+                                "\(nombreDePartsChoisi)",
+                                value: $nombreDePartsChoisi,
+                                in: 1...50
+                            )
                         }
 
                         Button("Ajouter la recette", systemImage: "plus.circle") {
@@ -388,6 +524,66 @@ struct EditSemaineView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Enregistrer", action: enregistrer)
                         .disabled(recettesChoisies.isEmpty)
+                }
+            }
+            .sheet(isPresented: $afficherSelectionRecette) {
+                NavigationStack {
+                    List {
+                        ForEach(recettesParTagFiltrees.indices, id: \.self) { index in
+                            let groupe = recettesParTagFiltrees[index]
+                            DisclosureGroup {
+                                ForEach(groupe.recettes) { recette in
+                                    Button {
+                                        recetteChoisie = recette
+                                        afficherSelectionRecette = false
+                                    } label: {
+                                        HStack {
+                                            Text(recette.nom)
+                                            Spacer()
+                                            if recetteChoisie?.persistentModelID == recette.persistentModelID {
+                                                Image(systemName: "checkmark")
+                                                    .foregroundStyle(.purple)
+                                            }
+                                        }
+                                    }
+                                    .foregroundStyle(.primary)
+                                }
+                            } label: {
+                                HStack {
+                                    if let tag = groupe.tag {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 10, height: 10)
+                                        Text(tag.nom)
+                                    } else {
+                                        Image(systemName: "tag.slash")
+                                            .foregroundStyle(.secondary)
+                                        Text("Sans tag")
+                                    }
+                                    Spacer()
+                                    Text("\(groupe.recettes.count)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Choisir une recette")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fermer") {
+                                afficherSelectionRecette = false
+                            }
+                        }
+                    }
+                    .safeAreaInset(edge: .bottom) {
+                        TextField("Rechercher une recette", text: $rechercheRecette)
+                            .textFieldStyle(.roundedBorder)
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(.thinMaterial)
+                    }
                 }
             }
         }
