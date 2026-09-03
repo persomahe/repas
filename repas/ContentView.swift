@@ -21,48 +21,73 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 12) {
-                NavigationLink("Planifier ma semaine") {
-                    SemaineListView()
-                }
-                .buttonStyle(CarteButtonStyle(couleur: .orange))
+            ZStack(alignment: .top) {
+                Color(hex: "#FEF6E7")
+                    .ignoresSafeArea()
 
-                NavigationLink("Ma liste de courses") {
-                    if let semaine = derniereSemaine {
-                        CourseDestinationView(semaine: semaine)
-                    } else {
-                        Text("Aucune semaine planifiée.")
+                GeometryReader { geometry in
+                    Ellipse()
+                        .fill(
+                            LinearGradient(
+                                colors: [.orange, .pink],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(
+                            width: geometry.size.width * 1.4,
+                            height: 280
+                        )
+                        .offset(
+                            x: -geometry.size.width * 0.2,
+                            y: -36
+                        )
+                }
+                .ignoresSafeArea()
+
+                VStack(spacing: 12) {
+                    NavigationLink("Planifier ma semaine") {
+                        SemaineListView()
                     }
-                }
-                .buttonStyle(CarteButtonStyle(couleur: .green))
-                
-                Spacer()
-                
-                NavigationLink("Voir les recettes") {
-                    RecetteListView()
-                }
-                .buttonStyle(CarteButtonStyle(couleur: .purple))
+                    .buttonStyle(CarteButtonStyle(couleur: .purple))
 
-                Spacer()
-                
-                Text("Paramètres")
-                .padding(.top)
-                .font(.subheadline)
-                .fontWeight(.regular)
+                    NavigationLink("Ma liste de courses") {
+                        if let semaine = derniereSemaine {
+                            CourseDestinationView(semaine: semaine)
+                        } else {
+                            Text("Aucune semaine planifiée.")
+                        }
+                    }
+                    .buttonStyle(CarteButtonStyle(couleur: .green))
+                    
+                    Spacer()
+                    
+                    NavigationLink("Voir les recettes") {
+                        RecetteListView()
+                    }
+                    .buttonStyle(CarteButtonStyle(couleur: .orange))
 
-                NavigationLink("Voir les tags") {
-                    TagListView()
+                    Spacer()
+                    
+                    Text("Paramètres")
+                    .padding(.top)
+                    .font(.subheadline)
+                    .fontWeight(.regular)
+
+                    NavigationLink("Voir les tags") {
+                        TagListView()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.top)
+
+                    NavigationLink("Voir les produits") {
+                        ProduitListView()
+                    }
+                    .buttonStyle(.borderedProminent)
+
                 }
-                .buttonStyle(.borderedProminent)
-                .padding(.top)
-
-                NavigationLink("Voir les produits") {
-                    ProduitListView()
-                }
-                .buttonStyle(.borderedProminent)
-
+                .padding()
             }
-            .padding()
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Gestion des repas")
@@ -70,7 +95,7 @@ struct ContentView: View {
                 }
             }
             .fontWeight(.bold)
-
+            .toolbarBackground(.hidden, for: .navigationBar)
         }
         
     }
