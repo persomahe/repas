@@ -55,6 +55,8 @@ struct RecetteListView: View {
                 recetteRow(recettesFiltrees[index])
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .searchable(text: $recherche, prompt: "Nom ou produit")
         .navigationTitle("Recettes")
         .toolbar {
@@ -145,6 +147,7 @@ struct RecetteListView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(recette.nom)
                     .font(.headline)
+                    .foregroundStyle(.orange)
 
                 HStack(spacing: 12) {
                     Label("\(recette.nombreDeParts) parts", systemImage: "person.2")
@@ -250,6 +253,7 @@ struct NouvelleRecetteView: View {
                 Section {
                     TextField("Nom de la recette", text: $nom)
                         .fontWeight(.semibold)
+                        .foregroundStyle(.orange)
                     HStack {
                         Text("Parts")
 
@@ -258,7 +262,7 @@ struct NouvelleRecetteView: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
 
                         Text("\(nombreDeParts)")
                             .monospacedDigit()
@@ -280,7 +284,7 @@ struct NouvelleRecetteView: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
 
                         Text("\(tempsPreparationMinutes)")
                             .monospacedDigit()
@@ -291,7 +295,7 @@ struct NouvelleRecetteView: View {
                         } label: {
                             Image(systemName: "plus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
                     }
                 }
 
@@ -313,7 +317,7 @@ struct NouvelleRecetteView: View {
                                 Text(ingredients[index].quantite.formatted())
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.purple)
+                                    .foregroundStyle(.orange)
                             }
                             .frame(maxWidth: .infinity, minHeight: 70)
                             .padding(8)
@@ -352,6 +356,8 @@ struct NouvelleRecetteView: View {
                             }
                         }
                         .disabled(produitChoisi == nil)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.orange)
                     }
                 }
 
@@ -382,7 +388,7 @@ struct NouvelleRecetteView: View {
                                 VStack(spacing: 8) {
                                     Image(systemName: saisonSelectionnee ? "checkmark.circle.fill" : "circle")
                                         .font(.title3)
-                                        .foregroundStyle(saisonSelectionnee ? Color.accentColor : Color.secondary)
+                                        .foregroundStyle(saisonSelectionnee ? Color.orange : Color.secondary)
 
                                     Text(saison.rawValue)
                                         .font(.caption)
@@ -393,11 +399,11 @@ struct NouvelleRecetteView: View {
                                 .padding(8)
                                 .background(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .fill(saisonSelectionnee ? Color.accentColor.opacity(0.15) : Color(.secondarySystemBackground))
+                                        .fill(saisonSelectionnee ? Color.orange.opacity(0.15) : Color(.secondarySystemBackground))
                                 )
                                 .overlay {
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(saisonSelectionnee ? Color.accentColor : Color.clear, lineWidth: 1)
+                                        .stroke(saisonSelectionnee ? Color.orange : Color.clear, lineWidth: 1)
                                 }
                             }
                             .buttonStyle(.plain)
@@ -452,7 +458,7 @@ struct NouvelleRecetteView: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(
                                                 tagSelectionne
-                                                ? Color.accentColor.opacity(0.15)
+                                                ? Color.orange.opacity(0.15)
                                                 : Color(.secondarySystemBackground)
                                             )
                                     )
@@ -460,7 +466,7 @@ struct NouvelleRecetteView: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .stroke(
                                                 tagSelectionne
-                                                ? Color.accentColor
+                                                ? Color.orange
                                                 : Color.clear,
                                                 lineWidth: 1
                                             )
@@ -485,6 +491,8 @@ struct NouvelleRecetteView: View {
                 }
             }
             .font(.subheadline)
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         }
     }
 
@@ -551,6 +559,7 @@ struct EditRecetteView: View {
                 Section {
                     TextField("Nom de la recette", text: $nom)
                         .fontWeight(.semibold)
+                        .foregroundStyle(.orange)
                     HStack {
                         Text("Parts")
 
@@ -559,7 +568,7 @@ struct EditRecetteView: View {
                         } label: {
                             Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
 
                         Text("\(nombreDeParts)")
                             .monospacedDigit()
@@ -582,7 +591,7 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "minus.circle")
                          }
-                         .buttonStyle(.plain)
+                         .buttonStyle(.borderless)
 
                          Text("\(tempsPreparationMinutes)")
                              .monospacedDigit()
@@ -593,7 +602,7 @@ struct EditRecetteView: View {
                          } label: {
                              Image(systemName: "plus.circle")
                          }
-                         .buttonStyle(.plain)
+                         .buttonStyle(.borderless)
                      }
                  }
 
@@ -615,7 +624,7 @@ struct EditRecetteView: View {
                                 Text(ingredients[index].quantite.formatted())
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
-                                    .foregroundStyle(.purple)
+                                    .foregroundStyle(.orange)
                             }
                             .frame(maxWidth: .infinity, minHeight: 70)
                             .padding(8)
@@ -654,6 +663,8 @@ struct EditRecetteView: View {
                             }
                         }
                         .disabled(produitChoisi == nil)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.orange)
                     }
                 }
  
@@ -685,7 +696,7 @@ struct EditRecetteView: View {
                                 VStack(spacing: 8) {
                                     Image(systemName: saisonSelectionnee ? "checkmark.circle.fill" : "circle")
                                         .font(.title3)
-                                        .foregroundStyle(saisonSelectionnee ? Color.accentColor : Color.secondary)
+                                        .foregroundStyle(saisonSelectionnee ? Color.orange : Color.secondary)
 
                                     Text(saison.rawValue)
                                         .font(.caption)
@@ -698,7 +709,7 @@ struct EditRecetteView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .fill(
                                             saisonSelectionnee
-                                            ? Color.accentColor.opacity(0.15)
+                                            ? Color.orange.opacity(0.15)
                                             : Color(.secondarySystemBackground)
                                         )
                                 )
@@ -706,7 +717,7 @@ struct EditRecetteView: View {
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(
                                             saisonSelectionnee
-                                            ? Color.accentColor
+                                            ? Color.orange
                                             : Color.clear,
                                             lineWidth: 1
                                         )
@@ -764,7 +775,7 @@ struct EditRecetteView: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .fill(
                                                 tagSelectionne
-                                                ? Color.accentColor.opacity(0.15)
+                                                ? Color.orange.opacity(0.15)
                                                 : Color(.secondarySystemBackground)
                                             )
                                     )
@@ -772,7 +783,7 @@ struct EditRecetteView: View {
                                         RoundedRectangle(cornerRadius: 12)
                                             .stroke(
                                                 tagSelectionne
-                                                ? Color.accentColor
+                                                ? Color.orange
                                                 : Color.clear,
                                                 lineWidth: 1
                                             )
@@ -797,6 +808,8 @@ struct EditRecetteView: View {
                 }
             }
             .font(.subheadline)
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
 
         }
     }

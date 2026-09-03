@@ -36,6 +36,8 @@ struct TagListView: View {
                 tagRow(tags[index])
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .navigationTitle("Tags")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -173,6 +175,8 @@ struct NouveauTagView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
             .navigationTitle("Nouveau tag")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -232,6 +236,8 @@ struct EditTagView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
             .navigationTitle("Modifier le tag")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

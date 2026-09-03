@@ -51,6 +51,8 @@ struct ProduitListView: View {
             }
             .padding(.vertical, 8)
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
         .navigationTitle("Produits")
         .toolbar {
@@ -228,6 +230,8 @@ struct NouveauProduitView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
             .navigationTitle("Nouveau produit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -311,6 +315,8 @@ struct EditProduitView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
             .navigationTitle("Modifier le produit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

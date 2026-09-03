@@ -68,12 +68,14 @@ struct SemaineListView: View {
                             }
                         }
                     }
-                    .foregroundStyle(.green)
+                    .foregroundStyle(Color(hex: "#AF52DE"))
                     .fontWeight(.medium)
                     
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "#F5EAFB").ignoresSafeArea())
         .navigationTitle("Ma semaine")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -165,7 +167,7 @@ struct NouvelleSemaineView: View {
                     ForEach(recettesSelectionnees) { recette in
                         HStack {
                             Text(recette.nom)
-                                .foregroundStyle(.green)
+                                .foregroundStyle(Color(hex: "#AF52DE"))
                                 .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -220,6 +222,8 @@ struct NouvelleSemaineView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#F5EAFB").ignoresSafeArea())
             .font(.subheadline)
             .navigationTitle("Planifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)
@@ -284,7 +288,7 @@ struct EditSemaineView: View {
                     ForEach(recettesChoisies.indices, id: \.self) { index in
                         HStack {
                             Text(recettesChoisies[index].recette.nom)
-                            .foregroundStyle(.green)
+                            .foregroundStyle(Color(hex: "#AF52DE"))
                             .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -336,6 +340,8 @@ struct EditSemaineView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#F5EAFB").ignoresSafeArea())
             .font(.subheadline)
             .navigationTitle("Modifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)

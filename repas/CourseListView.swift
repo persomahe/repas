@@ -181,6 +181,8 @@ struct CourseListView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color(hex: "#EBFAEE").ignoresSafeArea())
         .task {
             guard tagSelectionne == nil else { return }
             tagSelectionne = tousLesTags.first { tag in
@@ -284,7 +286,7 @@ private struct SectionHeader: View {
     var body: some View {
         Label(title, systemImage: systemImage)
             .font(.headline)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.green)
     }
 }
 
@@ -302,14 +304,14 @@ private struct IngredientCard: View {
                 .lineLimit(2)
             Text(quantite.formatted(.number.precision(.fractionLength(0...2))))
                 .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundStyle(.purple)
+                .fontWeight(.semibold)
+                .foregroundStyle(.white)
         }
         .frame(maxWidth: .infinity, minHeight: 70)
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemBackground))
+                .fill(Color(hex: "#34C759"))
         )
     }
 }
