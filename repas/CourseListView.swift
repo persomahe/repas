@@ -23,6 +23,7 @@ struct CourseListView: View {
 
     /// Tag sélectionné pour la section « À prendre ».
     @State private var tagSelectionne: Tag?
+    @State private var carteAnimee: PersistentIdentifier?
 
     private var produitsFiltres: [Produit] {
         guard let tagSelectionne else { return produits }
@@ -87,7 +88,7 @@ struct CourseListView: View {
             } else {
                 LazyVGrid(
                     columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                    ForEach(dejaAjoutes) { ingredient in
+                    ForEach(dejaAjoutes, id: \.id) { ingredient in
                         Button {
                             retirerDuPanier(ingredient.produit)
                         } label: {
@@ -95,10 +96,26 @@ struct CourseListView: View {
                                 nom: ingredient.produit.nom,
                                 quantite: ingredient.quantite
                             )
+                            .scaleEffect(carteAnimee == ingredient.id ? 1.2 : 1)
+                            .animation(
+                                .spring(response: 0.35, dampingFraction: 0.55),
+                                value: carteAnimee == ingredient.id
+                            )
                         }
                         .buttonStyle(.plain)
+                        .transition(
+                            .asymmetric(
+                                insertion: .scale(scale: 0.2).combined(with: .opacity),
+                                removal: .opacity
+                            )
+                        )
                     }
                 }
+                .animation(
+                    .spring(response: 0.45, dampingFraction: 0.6),
+                    value: dejaAjoutes.map(\.id)
+                )
+
             }
 
             // Section "À prendre"
@@ -181,16 +198,28 @@ struct CourseListView: View {
             return
         }
 
-        if let ingredientExistant = course.ingredients.first(where: { $0.produit === produit }) {
-            ingredientExistant.quantite += 1
-        } else {
-            let nouvelIngredient = IngredientCourse(
-                course: course,
-                produit: produit,
-                quantite: 1
-            )
-            modelContext.insert(nouvelIngredient)
-            course.ingredients.append(nouvelIngredient)
+        withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
+            if let ingredientExistant = course.ingredients.first(where: { $0.produit === produit }) {
+                ingredientExistant.quantite += 1
+            } else {
+                let nouvelIngredient = IngredientCourse(
+                    course: course,
+                    produit: produit,
+                    quantite: 1
+                )
+                modelContext.insert(nouvelIngredient)
+                course.ingredients.append(nouvelIngredient)
+            }
+
+            let id = produit.persistentModelID
+            DispatchQueue.main.async {
+                carteAnimee = id
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+                    if carteAnimee == id {
+                        carteAnimee = nil
+                    }
+                }
+            }
         }
     }
 
