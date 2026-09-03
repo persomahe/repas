@@ -61,6 +61,10 @@ struct ContentView: View {
                     .buttonStyle(CarteButtonStyle(couleur: .green))
                     
                     Spacer()
+                    Text("🛒") // charriot
+                        .font(.system(size: 70))
+                    Spacer()
+
                     
                     NavigationLink("Voir les recettes") {
                         RecetteListView()
