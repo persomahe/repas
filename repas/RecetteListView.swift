@@ -271,6 +271,21 @@ struct NouvelleRecetteView: View {
     /// Saisie de l'ingrédient à ajouter
     @State private var produitChoisi: Produit?
     @State private var quantiteChoisie = 1.0
+    @State private var afficherSelectionProduit = false
+
+    private var produitsParTag: [(tag: Tag?, produits: [Produit])] {
+        var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, produits: [Produit])? in
+            let produits = tousLesProduits.filter { produit in
+                produit.tags.contains { $0.persistentModelID == tag.persistentModelID }
+            }
+            return produits.isEmpty ? nil : (tag: tag, produits: produits)
+        }
+        let produitsSansTag = tousLesProduits.filter { $0.tags.isEmpty }
+        if !produitsSansTag.isEmpty {
+            groupes.append((tag: nil, produits: produitsSansTag))
+        }
+        return groupes
+    }
 
     var body: some View {
         NavigationStack {
@@ -358,10 +373,14 @@ struct NouvelleRecetteView: View {
                         Text("Aucun produit disponible. Crée d'abord des produits.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Ingrédient à ajouter", selection: $produitChoisi) {
-                            Text("Choisir…").tag(Produit?.none)
-                            ForEach(tousLesProduits) { produit in
-                                Text(produit.nom).tag(Optional(produit))
+                        HStack {
+                            Text("Ingrédient à ajouter")
+                            Spacer()
+                            Button {
+                                afficherSelectionProduit = true
+                            } label: {
+                                Text(produitChoisi?.nom ?? "À choisir…")
+                                    .foregroundStyle(produitChoisi == nil ? Color.secondary : Color.orange)
                             }
                         }
 
@@ -518,6 +537,60 @@ struct NouvelleRecetteView: View {
             .font(.subheadline)
             .scrollContentBackground(.hidden)
             .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .sheet(isPresented: $afficherSelectionProduit) {
+                NavigationStack {
+                    List {
+                        ForEach(produitsParTag.indices, id: \.self) { index in
+                            let groupe = produitsParTag[index]
+                            DisclosureGroup {
+                                ForEach(groupe.produits) { produit in
+                                    Button {
+                                        produitChoisi = produit
+                                        afficherSelectionProduit = false
+                                    } label: {
+                                        HStack {
+                                            Text(produit.nom)
+                                            Spacer()
+                                            if produitChoisi?.persistentModelID == produit.persistentModelID {
+                                                Image(systemName: "checkmark")
+                                                    .foregroundStyle(.orange)
+                                            }
+                                        }
+                                    }
+                                    .foregroundStyle(.primary)
+                                }
+                            } label: {
+                                HStack {
+                                    if let tag = groupe.tag {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 10, height: 10)
+                                        Text(tag.nom)
+                                    } else {
+                                        Image(systemName: "tag.slash")
+                                            .foregroundStyle(.secondary)
+                                        Text("Sans tag")
+                                    }
+                                    Spacer()
+                                    Text("\(groupe.produits.count)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Choisir un produit")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fermer") {
+                                afficherSelectionProduit = false
+                            }
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -566,6 +639,21 @@ struct EditRecetteView: View {
     /// Saisie de l'ingrédient à ajouter
     @State private var produitChoisi: Produit?
     @State private var quantiteChoisie = 1.0
+    @State private var afficherSelectionProduit = false
+
+    private var produitsParTag: [(tag: Tag?, produits: [Produit])] {
+        var groupes = tousLesTags.compactMap { tag -> (tag: Tag?, produits: [Produit])? in
+            let produits = tousLesProduits.filter { produit in
+                produit.tags.contains { $0.persistentModelID == tag.persistentModelID }
+            }
+            return produits.isEmpty ? nil : (tag: tag, produits: produits)
+        }
+        let produitsSansTag = tousLesProduits.filter { $0.tags.isEmpty }
+        if !produitsSansTag.isEmpty {
+            groupes.append((tag: nil, produits: produitsSansTag))
+        }
+        return groupes
+    }
 
     init(recette: Recette) {
         self.recette = recette
@@ -665,10 +753,14 @@ struct EditRecetteView: View {
                         Text("Aucun produit disponible. Crée d'abord des produits.")
                             .foregroundStyle(.secondary)
                     } else {
-                        Picker("Ingrédient à ajouter", selection: $produitChoisi) {
-                            Text("Choisir…").tag(Produit?.none)
-                            ForEach(tousLesProduits) { produit in
-                                Text(produit.nom).tag(Optional(produit))
+                        HStack {
+                            Text("Ingrédient à ajouter")
+                            Spacer()
+                            Button {
+                                afficherSelectionProduit = true
+                            } label: {
+                                Text(produitChoisi?.nom ?? "À choisir…")
+                                    .foregroundStyle(produitChoisi == nil ? Color.secondary : Color.orange)
                             }
                         }
 
@@ -835,6 +927,59 @@ struct EditRecetteView: View {
             .font(.subheadline)
             .scrollContentBackground(.hidden)
             .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .sheet(isPresented: $afficherSelectionProduit) {
+                NavigationStack {
+                    List {
+                        ForEach(produitsParTag.indices, id: \.self) { index in
+                            let groupe = produitsParTag[index]
+                            DisclosureGroup {
+                                ForEach(groupe.produits) { produit in
+                                    Button {
+                                        produitChoisi = produit
+                                        afficherSelectionProduit = false
+                                    } label: {
+                                        HStack {
+                                            Text(produit.nom)
+                                            Spacer()
+                                            if produitChoisi?.persistentModelID == produit.persistentModelID {
+                                                Image(systemName: "checkmark")
+                                                    .foregroundStyle(.orange)
+                                            }
+                                        }
+                                    }
+                                    .foregroundStyle(.primary)
+                                }
+                            } label: {
+                                HStack {
+                                    if let tag = groupe.tag {
+                                        Circle()
+                                            .fill(Color(hex: tag.couleurHex))
+                                            .frame(width: 10, height: 10)
+                                        Text(tag.nom)
+                                    } else {
+                                        Image(systemName: "tag.slash")
+                                            .foregroundStyle(.secondary)
+                                        Text("Sans tag")
+                                    }
+                                    Spacer()
+                                    Text("\(groupe.produits.count)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Choisir un produit")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Fermer") {
+                                afficherSelectionProduit = false
+                            }
+                        }
+                    }
+                }
+            }
 
         }
     }
