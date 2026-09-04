@@ -18,6 +18,12 @@ struct ProduitListView: View {
     /// Recettes pour vérifier si un produit est utilisé.
     @Query(sort: \Recette.nom) private var recettes: [Recette]
 
+    /// Tags disponibles pour le filtre.
+    @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
+
+    /// Tag sélectionné pour le filtre.
+    @State private var tagSelectionne: Tag?
+
     /// Contrôle l'affichage de la fiche de création d'un produit
     @State private var ajoutEnCours = false
 
@@ -33,9 +39,18 @@ struct ProduitListView: View {
     /// Produits correspondant au nom recherché.
     private var produitsFiltres: [Produit] {
         let texte = rechercheNom.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !texte.isEmpty else { return produits }
+
         return produits.filter { produit in
-            produit.nom.localizedCaseInsensitiveContains(texte)
+            let correspondAuNom = texte.isEmpty
+                || produit.nom.localizedCaseInsensitiveContains(texte)
+
+            let correspondAuTag = tagSelectionne.map { tag in
+                produit.tags.contains {
+                    $0.persistentModelID == tag.persistentModelID
+                }
+            } ?? true
+
+            return correspondAuNom && correspondAuTag
         }
     }
 
@@ -56,6 +71,41 @@ struct ProduitListView: View {
         .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
         .navigationTitle("Produits")
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Menu {
+                    Section("Tags") {
+                        Button {
+                            tagSelectionne = nil
+                        } label: {
+                            Label(
+                                "Tous les tags",
+                                systemImage: tagSelectionne == nil ? "checkmark" : "tag"
+                            )
+                        }
+
+                        ForEach(tousLesTags) { tag in
+                            Button {
+                                tagSelectionne = tag
+                            } label: {
+                                Label(
+                                    tag.nom,
+                                    systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID
+                                        ? "checkmark"
+                                        : "tag"
+                                )
+                            }
+                        }
+                    }
+                } label: {
+                    Label(
+                        "Filtrer",
+                        systemImage: tagSelectionne == nil
+                            ? "line.3.horizontal.decrease.circle"
+                            : "line.3.horizontal.decrease.circle.fill"
+                    )
+                }
+            }
+
             ToolbarItem(placement: .primaryAction) {
                 Button("Ajouter un produit", systemImage: "plus") {
                     ajoutEnCours = true
