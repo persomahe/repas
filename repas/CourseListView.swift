@@ -13,6 +13,8 @@ struct CourseListView: View {
     /// La course affichée
     let course: Course
 
+    @State private var afficherInformations = false
+    
     @Environment(\.modelContext) private var modelContext
 
     /// Tous les produits existants, pour la liste "à prendre"
@@ -92,120 +94,106 @@ struct CourseListView: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(
-                        width: geometry.size.width * 1.4,
-                        height: 280
-                    )
-                    .offset(
-                        x: -geometry.size.width * 0.2,
-                        y: -36
-                    )
+                    .frame(width: geometry.size.width * 1.4, height: 280)
+                    .offset(x: -geometry.size.width * 0.2, y: -36)
             }
             .ignoresSafeArea()
+
             List {
-            // Section "Déjà ajoutés"
-            SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
-            if dejaAjoutes.isEmpty {
-                Text("Aucun ingrédient déjà ajouté.")
-                    .foregroundStyle(.secondary)
-            } else {
-                LazyVGrid(
-                    columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                    ForEach(dejaAjoutes, id: \.id) { ingredient in
-                        Button {
-                            retirerDuPanier(ingredient.produit)
-                        } label: {
-                            IngredientCard(
-                                nom: ingredient.produit.nom,
-                                quantite: ingredient.quantite
-                            )
-                            .scaleEffect(carteAnimee == ingredient.id ? 1.2 : 1)
-                            .animation(
-                                .spring(response: 0.35, dampingFraction: 0.55),
-                                value: carteAnimee == ingredient.id
-                            )
+                Section {
+                    SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
+
+                    if dejaAjoutes.isEmpty {
+                        Text("Aucun ingrédient déjà ajouté.")
+                            .foregroundStyle(.secondary)
+                    } else {
+                        LazyVGrid(
+                            columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
+                            spacing: 12
+                        ) {
+                            ForEach(dejaAjoutes) { ingredient in
+                                Button {
+                                    retirerDuPanier(ingredient.produit)
+                                } label: {
+                                    IngredientCard(
+                                        nom: ingredient.produit.nom,
+                                        quantite: ingredient.quantite
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
-                        .buttonStyle(.plain)
-                        .transition(
-                            .asymmetric(
-                                insertion: .scale(scale: 0.2).combined(with: .opacity),
-                                removal: .opacity
-                            )
-                        )
                     }
                 }
-                .animation(
-                    .spring(response: 0.45, dampingFraction: 0.6),
-                    value: dejaAjoutes.map(\.id)
-                )
 
-            }
+                Section {
+                    HStack {
+                        SectionHeader(title: "À prendre", systemImage: "plus.circle")
+                        Spacer()
 
-            // Section "À prendre"
-            HStack {
-                SectionHeader(title: "À prendre", systemImage: "plus.circle")
+                        Menu {
+                            Button {
+                                tagSelectionne = nil
+                            } label: {
+                                Label(
+                                    "Tous les produits",
+                                    systemImage: tagSelectionne == nil
+                                        ? "checkmark"
+                                        : "line.3.horizontal.decrease.circle"
+                                )
+                            }
 
-                Spacer()
-
-                Menu {
-                    Button {
-                        tagSelectionne = nil
-                    } label: {
-                        Label(
-                            "Tous les produits",
-                            systemImage: tagSelectionne == nil ? "checkmark" : "line.3.horizontal.decrease.circle"
-                        )
-                    }
-
-                    ForEach(tousLesTags) { tag in
-                        Button {
-                            tagSelectionne = tag
+                            ForEach(tousLesTags) { tag in
+                                Button {
+                                    tagSelectionne = tag
+                                } label: {
+                                    Label(
+                                        tag.nom,
+                                        systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID
+                                            ? "checkmark"
+                                            : "tag"
+                                    )
+                                }
+                            }
                         } label: {
                             Label(
-                                tag.nom,
-                                systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID
-                                    ? "checkmark"
-                                    : "tag"
+                                tagSelectionne?.nom ?? "Tous",
+                                systemImage: tagSelectionne == nil
+                                    ? "line.3.horizontal.decrease.circle"
+                                    : "line.3.horizontal.decrease.circle.fill"
                             )
+                            .font(.caption)
                         }
                     }
-                } label: {
-                    Label(
-                        tagSelectionne?.nom ?? "Tous",
-                        systemImage: tagSelectionne == nil
-                            ? "line.3.horizontal.decrease.circle"
-                            : "line.3.horizontal.decrease.circle.fill"
-                    )
-                    .font(.caption)
-                }
-            }
-            .padding(.vertical, 4)
+                    .padding(.vertical, 4)
 
-            if produitsFiltres.isEmpty {
-                Text(
-                    produits.isEmpty
-                    ? "Aucun produit disponible. Crée d'abord des produits."
-                    : "Aucun produit avec ce tag."
-                )
-                .foregroundStyle(.secondary)
-            } else {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                    ForEach(produitsFiltres) { produit in
-                        Button {
-                            ajouterAprendre(produit)
-                        } label: {
-                            IngredientCard(
-                                nom: produit.nom,
-                                quantite: 1
-                            )
+                    if produitsFiltres.isEmpty {
+                        Text(
+                            produits.isEmpty
+                                ? "Aucun produit disponible. Crée d'abord des produits."
+                                : "Aucun produit avec ce tag."
+                        )
+                        .foregroundStyle(.secondary)
+                    } else {
+                        LazyVGrid(
+                            columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
+                            spacing: 12
+                        ) {
+                            ForEach(produitsFiltres) { produit in
+                                Button {
+                                    ajouterAprendre(produit)
+                                } label: {
+                                    IngredientCard(nom: produit.nom, quantite: 1)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
-                        .buttonStyle(.plain)
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(.clear)
         }
-        .scrollContentBackground(.hidden)
-        .background(.clear)
         .task {
             guard tagSelectionne == nil else { return }
             tagSelectionne = tousLesTags.first { tag in
@@ -213,6 +201,51 @@ struct CourseListView: View {
             }
         }
         .navigationTitle("Liste de courses")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    afficherInformations = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .accessibilityLabel("Afficher les informations")
+            }
+        }
+        .sheet(isPresented: $afficherInformations) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("""
+                        - Les ingrédients « Déjà ajoutés » sont ceux hérités automatiquement des recettes pour cette semaine.
+                        - Les ingrédients « À prendre » sont tous les produits existants, filtrables par tag (menu bleu).\n
+                        """)
+                        
+                        Text("Fonctionnement général")
+                            .font(.headline)
+
+                        Text("""
+                        - Pour ajouter un ingrédient à la liste de courses, clique directement sur un produit (le carré) dans la section « À prendre » :
+                        1 clic = ajoute 1 unité, 2 clics = ajoute 2 unités, etc ;
+                        1 unité = 1 produit ou 100 gr de produit.\n
+                        - Pour retirer un ingrédient de la liste de courses, clique directement sur un produit (le carré) dans la section « Déjà ajoutés » :
+                        1 clic = retire 1 unité, 2 clics = retire 2 unités, etc ;
+                        1 unité = 1 produit ou 100 gr de produit.\n
+                        """)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .navigationTitle("Informations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fermer") {
+                            afficherInformations = false
+                        }
+                    }
+                }
+                .tint(.green)
+            }
         }
     }
 
@@ -266,8 +299,6 @@ struct CourseListView: View {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
                 ingredient.quantite -= 1
             }
-
-            reinitialiserAnimationCarte(id: id)
         } else {
             // Laisse le zoom être visible avant de retirer la dernière unité.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {

@@ -154,7 +154,7 @@ struct RecetteListView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("""
-                        - Les recettes ne contiennent que les ingrédients essentiels à la liste de courses : le sel, le poivre, l’ail, la sauce tomate… sont déjà dans les placards !")
+                        - Les recettes ne contiennent que les ingrédients essentiels à la liste de courses : le sel, le poivre, l’ail, la sauce tomate… sont déjà dans les placards !)
                         - Tagger les recettes est important pour pouvoir les filtrer.\n
                         """)
 
