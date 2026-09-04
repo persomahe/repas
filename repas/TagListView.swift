@@ -148,14 +148,20 @@ struct NouveauTagView: View {
 
     @State private var nom = ""
     @State private var couleurHex = "#007AFF"
+    @State private var dernierAjout: String?
 
     /// Palette de couleurs proposées
-    private let couleurs = ["#007AFF", "#34C759", "#FF9500", "#FF3B30", "#AF52DE", "#5856D6", "#FF2D55", "#8E8E93"]
+    private let couleurs = ["#007AFF", "#34C759", "#FFCC00", "#FF9500", "#FF3B30", "#AF52DE", "#5856D6", "#FF2D55", "#8B4513", "#8E8E93"]
 
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Nom du tag", text: $nom)
+
+                if let dernierAjout {
+                    Label("« \(dernierAjout) » ajouté", systemImage: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                }
 
                 Section("Couleur") {
                     HStack {
@@ -181,12 +187,17 @@ struct NouveauTagView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button("Fermer") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Ajouter") {
-                        context.insert(Tag(nom: nom.trimmingCharacters(in: .whitespaces), couleurHex: couleurHex))
-                        dismiss()
+                        let nomNettoye = nom.trimmingCharacters(in: .whitespaces)
+                        guard !nomNettoye.isEmpty else { return }
+
+                        context.insert(Tag(nom: nomNettoye, couleurHex: couleurHex))
+                        dernierAjout = nomNettoye
+                        nom = ""
+                        couleurHex = "#007AFF"
                     }
                     .disabled(nom.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
