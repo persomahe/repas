@@ -158,7 +158,7 @@ struct RecetteListView: View {
                         - Tagger les recettes est important pour pouvoir les filtrer.\n
                         """)
 
-                        Text("Nouvelle recette → +")
+                        Text("Nouvelle recette +")
                             .font(.headline)
 
                         Text("""
@@ -340,6 +340,10 @@ struct NouvelleRecetteView: View {
     @State private var afficherSelectionProduit = false
     @State private var rechercheProduit = ""
 
+    private var pasDeQuantite: Double {
+        produitChoisi?.typeUnite.pas ?? TypeUnite.piece.pas
+    }
+
     private var produitsParTagFiltres: [(tag: Tag?, produits: [Produit])] {
         let recherche = rechercheProduit.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !recherche.isEmpty else { return produitsParTag }
@@ -468,7 +472,7 @@ struct NouvelleRecetteView: View {
                             Spacer()
 
                             Button {
-                                quantiteChoisie = max(1, quantiteChoisie - 1)
+                                quantiteChoisie = max(pasDeQuantite, quantiteChoisie - pasDeQuantite)
                             } label: {
                                 Image(systemName: "minus.circle")
                             }
@@ -479,7 +483,7 @@ struct NouvelleRecetteView: View {
                                 .frame(minWidth: 40)
 
                             Button {
-                                quantiteChoisie += 1
+                                quantiteChoisie += pasDeQuantite
                             } label: {
                                 Image(systemName: "plus.circle")
                             }
@@ -490,7 +494,7 @@ struct NouvelleRecetteView: View {
                             if let produit = produitChoisi {
                                 ingredients.append((produit: produit, quantite: quantiteChoisie))
                                 produitChoisi = nil
-                                quantiteChoisie = 1.0
+                                quantiteChoisie = pasDeQuantite
                             }
                         }
                         .disabled(produitChoisi == nil)
@@ -640,6 +644,7 @@ struct NouvelleRecetteView: View {
                                 ForEach(groupe.produits) { produit in
                                     Button {
                                         produitChoisi = produit
+                                        quantiteChoisie = produit.typeUnite.pas
                                         afficherSelectionProduit = false
                                     } label: {
                                         HStack {
@@ -667,6 +672,7 @@ struct NouvelleRecetteView: View {
                                     }
                                     Spacer()
                                     Text("\(groupe.produits.count)")
+                                    
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -742,6 +748,10 @@ struct EditRecetteView: View {
     @State private var quantiteChoisie = 1.0
     @State private var afficherSelectionProduit = false
     @State private var rechercheProduit = ""
+
+    private var pasDeQuantite: Double {
+        produitChoisi?.typeUnite.pas ?? TypeUnite.piece.pas
+    }
 
     private var produitsParTagFiltres: [(tag: Tag?, produits: [Produit])] {
         let recherche = rechercheProduit.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -882,7 +892,7 @@ struct EditRecetteView: View {
                             Spacer()
 
                             Button {
-                                quantiteChoisie = max(1, quantiteChoisie - 1)
+                                quantiteChoisie = max(pasDeQuantite, quantiteChoisie - pasDeQuantite)
                             } label: {
                                 Image(systemName: "minus.circle")
                             }
@@ -893,7 +903,7 @@ struct EditRecetteView: View {
                                 .frame(minWidth: 40)
 
                             Button {
-                                quantiteChoisie += 1
+                                quantiteChoisie += pasDeQuantite
                             } label: {
                                 Image(systemName: "plus.circle")
                             }
@@ -904,7 +914,7 @@ struct EditRecetteView: View {
                             if let produit = produitChoisi {
                                 ingredients.append((produit: produit, quantite: quantiteChoisie))
                                 produitChoisi = nil
-                                quantiteChoisie = 1.0
+                                quantiteChoisie = pasDeQuantite
                             }
                         }
                         .disabled(produitChoisi == nil)
@@ -1064,6 +1074,7 @@ struct EditRecetteView: View {
                                 ForEach(groupe.produits) { produit in
                                     Button {
                                         produitChoisi = produit
+                                        quantiteChoisie = produit.typeUnite.pas
                                         afficherSelectionProduit = false
                                     } label: {
                                         HStack {

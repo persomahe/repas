@@ -231,6 +231,7 @@ struct NouveauProduitView: View {
     @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     @State private var nom = ""
+    @State private var typeUnite: TypeUnite = .piece
     @State private var tagsChoisis: Set<Tag> = []
 
     /// Nom du dernier produit ajouté, pour afficher une confirmation
@@ -245,6 +246,12 @@ struct NouveauProduitView: View {
                 TextField("Nom du produit", text: $nom)
                     .focused($nomFocalise)
                     .onSubmit(ajouterProduit)
+
+                Picker("Type d'unité", selection: $typeUnite) {
+                    ForEach(TypeUnite.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
 
                 if let dernierAjout {
                     Label("« \(dernierAjout) » ajouté", systemImage: "checkmark.circle.fill")
@@ -301,12 +308,13 @@ struct NouveauProduitView: View {
         let nomNettoye = nom.trimmingCharacters(in: .whitespaces)
         guard !nomNettoye.isEmpty else { return }
 
-        context.insert(Produit(nom: nomNettoye, tags: Array(tagsChoisis)))
+        context.insert(Produit(nom: nomNettoye, typeUnite: typeUnite, tags: Array(tagsChoisis)))
         dernierAjout = nomNettoye
 
         // Réinitialise le formulaire sans fermer la fiche
         nom = ""
         tagsChoisis = []
+        typeUnite = .piece
         nomFocalise = true
     }
 }
@@ -323,11 +331,13 @@ struct EditProduitView: View {
     @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     @State private var nom: String
+    @State private var typeUnite: TypeUnite
     @State private var tagsChoisis: Set<Tag>
 
     init(produit: Produit) {
         self.produit = produit
         _nom = State(initialValue: produit.nom)
+        _typeUnite = State(initialValue: produit.typeUnite)
         _tagsChoisis = State(initialValue: Set(produit.tags))
     }
 
@@ -335,6 +345,12 @@ struct EditProduitView: View {
         NavigationStack {
             Form {
                 TextField("Nom du produit", text: $nom)
+
+                Picker("Type d'unité", selection: $typeUnite) {
+                    ForEach(TypeUnite.allCases) { type in
+                        Text(type.rawValue).tag(type)
+                    }
+                }
 
                 Section("Tags") {
                     if tousLesTags.isEmpty {
@@ -387,6 +403,7 @@ struct EditProduitView: View {
         guard !nomNettoye.isEmpty else { return }
 
         produit.nom = nomNettoye
+        produit.typeUnite = typeUnite
         produit.tags = Array(tagsChoisis)
         dismiss()
     }

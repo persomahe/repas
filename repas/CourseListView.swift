@@ -121,6 +121,12 @@ struct CourseListView: View {
                                     )
                                 }
                                 .buttonStyle(.plain)
+                                .transition(.slide)
+                                .scaleEffect(carteAnimee == ingredient.id ? 1.2 : 1.0)
+                                .animation(
+                                    .spring(response: 0.4, dampingFraction: 0.65),
+                                    value: carteAnimee
+                                )
                             }
                         }
                     }
@@ -183,7 +189,7 @@ struct CourseListView: View {
                                 Button {
                                     ajouterAprendre(produit)
                                 } label: {
-                                    IngredientCard(nom: produit.nom, quantite: 1)
+                                    IngredientCard(nom: produit.nom, quantite: produit.typeUnite.pas)
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -215,22 +221,25 @@ struct CourseListView: View {
             NavigationStack {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("""
+                        let texte = AttributedString("""
                         - Les ingrédients « Déjà ajoutés » sont ceux hérités automatiquement des recettes pour cette semaine.
-                        - Les ingrédients « À prendre » sont tous les produits existants, filtrables par tag (menu bleu).\n
+                        - Les ingrédients « À prendre » sont tous les produits existants, filtrables par tag (menu bleu).
                         """)
-                        
+
+                        Text(texte)
+
                         Text("Fonctionnement général")
                             .font(.headline)
 
-                        Text("""
+                        let details = AttributedString("""
                         - Pour ajouter un ingrédient à la liste de courses, clique directement sur un produit (le carré) dans la section « À prendre » :
                         1 clic = ajoute 1 unité, 2 clics = ajoute 2 unités, etc ;
-                        1 unité = 1 produit ou 100 gr de produit.\n
+                        1 unité = 1 produit ou 100 gr de produit.
                         - Pour retirer un ingrédient de la liste de courses, clique directement sur un produit (le carré) dans la section « Déjà ajoutés » :
                         1 clic = retire 1 unité, 2 clics = retire 2 unités, etc ;
-                        1 unité = 1 produit ou 100 gr de produit.\n
+                        1 unité = 1 produit ou 100 gr de produit.
                         """)
+                        Text(details)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()
@@ -258,12 +267,12 @@ struct CourseListView: View {
 
         withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
             if let ingredientExistant = course.ingredients.first(where: { $0.produit === produit }) {
-                ingredientExistant.quantite += 1
+                ingredientExistant.quantite += produit.typeUnite.pas
             } else {
                 let nouvelIngredient = IngredientCourse(
                     course: course,
                     produit: produit,
-                    quantite: 1
+                    quantite: produit.typeUnite.pas
                 )
                 modelContext.insert(nouvelIngredient)
                 course.ingredients.append(nouvelIngredient)
@@ -293,11 +302,12 @@ struct CourseListView: View {
         }
 
         let id = produit.persistentModelID
+        let pas = produit.typeUnite.pas
         carteAnimee = id
 
-        if ingredient.quantite > 1 {
+        if ingredient.quantite > pas {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
-                ingredient.quantite -= 1
+                ingredient.quantite -= pas
             }
         } else {
             // Laisse le zoom être visible avant de retirer la dernière unité.
