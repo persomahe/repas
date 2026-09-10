@@ -66,6 +66,7 @@ enum RecipePreparationTimes {
         "puree-potiron": 60,
         "gaspacho": 120,
         "soupe-chinoise": 45,
-        "poulet-amande": 50
+        "poulet-amande": 50,
+        "chevre-chaud": 15
     ]
 }

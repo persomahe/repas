@@ -58,7 +58,71 @@
     }
   ],
   "produits": [
-    {
+      {
+        "id": "sate",
+        "nom": "Saté",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "gioza",
+        "nom": "Giozas",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "feuille-citron",
+        "nom": "Feuille de citronnier",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "riz-gluant",
+        "nom": "Riz gluant",
+        "typeUnite": "au poids",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "soja-sale",
+        "nom": "Sauce soja salée",
+        "typeUnite": "au poids",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "soja-sucre",
+        "nom": "Sauce soja sucrée",
+        "typeUnite": "au poids",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "nuoc-mam",
+        "nom": "Nuoc Mam",
+        "typeUnite": "au poids",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
+        "id": "vinaigre-riz",
+        "nom": "Vinaigre de riz",
+        "typeUnite": "au poids",
+        "tags": [
+          "chinois"
+        ]
+      },
+      {
       "id": "gel-douche",
       "nom": "Gel douche",
       "typeUnite": "à la pièce",
@@ -717,6 +781,22 @@
       "typeUnite": "à la pièce",
       "tags": [
         "feculents"
+      ]
+    },
+    {
+      "id": "pain-noix",
+      "nom": "Pain aux noix",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "feculents"
+      ]
+    },
+    {
+      "id": "crottin-chevre",
+      "nom": "Crottin de chèvre",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "laitiers"
       ]
     },
     {
@@ -1770,6 +1850,37 @@
         }
       ]
     },
+    {
+        "id": "chevre-chaud",
+        "nom": "Salade de chèvre chaud",
+        "nombreDeParts": 2,
+        "saisons": [],
+        "tags": [
+          "feculents",
+          "legumes",
+          "laitiers"
+        ],
+        "lien": null,
+        "tempsPreparationMinutes": 0,
+        "ingredients": [
+          {
+            "produit": "crottin-chevre",
+            "quantite": 2
+          },
+          {
+            "produit": "pain-noix",
+            "quantite": 1
+          },
+          {
+            "produit": "lardons-fumes",
+            "quantite": 200
+          },
+          {
+            "produit": "salade",
+            "quantite": 1
+          }
+        ]
+      },
     {
       "id": "paella-valence",
       "nom": "Paella Valence",

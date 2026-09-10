@@ -296,34 +296,17 @@ struct RecetteListView: View {
 
     @ViewBuilder
     private func recetteRow(_ recette: Recette) -> some View {
-        HStack {
+        HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text(recette.nom)
                     .font(.headline)
                     .foregroundStyle(.orange)
-
-                if let lien = recette.lien {
-                    Link(destination: lien) {
-                        Label("Voir la recette en ligne", systemImage: "safari")
-                            .font(.caption)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        recetteAEditer = recette
                     }
-                    .foregroundStyle(.blue)
-                }
 
-                if let page = RecipePDFPages.byID[recipeID(for: recette)] {
-                    Button {
-                        recettePDFSelectionnee = RecipePDFSelection(nom: recette.nom, page: page)
-                    } label: {
-                        Label("Voir dans le PDF · p. \(page)", systemImage: "doc.text.magnifyingglass")
-                            .font(.caption)
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.blue)
-                }
-
-                // (.caption)
-                // }
-
+                // Sous le nom : les tags d'abord.
                 if !recette.tags.isEmpty {
                     HStack(spacing: 6) {
                         ForEach(recette.tags) { tag in
@@ -337,10 +320,36 @@ struct RecetteListView: View {
                             }
                         }
                     }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        recetteAEditer = recette
+                    }
+                    
+                }
+
+                // Puis les liens associés à la recette.
+                if let lien = recette.lien {
+                    Link(destination: lien) {
+                        Label("Voir la recette en ligne", systemImage: "safari")
+                            .font(.caption)
+                    }
+                    .foregroundStyle(.blue)
+                    
+                }
+
+                if let page = RecipePDFPages.byID[recipeID(for: recette)] {
+                    Button {
+                        recettePDFSelectionnee = RecipePDFSelection(nom: recette.nom, page: page)
+                    } label: {
+                        Label("Voir dans le PDF · p. \(page)", systemImage: "doc.text.magnifyingglass")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.blue)
+                    
                 }
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
                 recetteASupprimer = recette
@@ -350,10 +359,6 @@ struct RecetteListView: View {
             .buttonStyle(.plain)
             .foregroundStyle(Color.red)
             .accessibilityLabel(Text("Supprimer la recette"))
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            recetteAEditer = recette
         }
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(named: Text("Modifier la recette")) {
