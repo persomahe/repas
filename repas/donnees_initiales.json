@@ -692,7 +692,7 @@
       "nom": "Compte",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -700,7 +700,7 @@
       "nom": "Skyr",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -708,7 +708,7 @@
       "nom": "Chocolat",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -764,7 +764,7 @@
       "nom": "Bonbon",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -772,7 +772,7 @@
       "nom": "Mousse au chocolat",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -780,7 +780,7 @@
       "nom": "Crème aux oeufs",
       "typeUnite": "à la pièce",
       "tags": [
-        "dessert"
+        "desserts"
       ]
     },
     {
@@ -796,7 +796,7 @@
       "nom": "Huile de coco",
       "typeUnite": "à la pièce",
       "tags": [
-        "boisson"
+        "boissons"
       ]
     },
     {
@@ -1510,11 +1510,11 @@
     },
     {
       "id": "perles-japon-coco",
-      "nom": "Perles Japon Coco",
+      "nom": "Perles du Japon Coco",
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 0,
@@ -2152,7 +2152,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 5,
@@ -2219,7 +2219,7 @@
       "nom": "Paella",
       "nombreDeParts": 12,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes", "legumes"],
       "lien": null,
       "tempsPreparationMinutes": 45,
       "ingredients": [
@@ -2415,7 +2415,7 @@
       "nom": "Encornets au balsamique",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes"],
       "lien": null,
       "tempsPreparationMinutes": 15,
       "ingredients": [
@@ -2537,7 +2537,7 @@
       "nom": "Chirachi Au Riz",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes", "feculents"],
       "lien": null,
       "tempsPreparationMinutes": 60,
       "ingredients": [
@@ -2732,7 +2732,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 25,
@@ -2795,7 +2795,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 30,
@@ -2828,7 +2828,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 30,
@@ -2861,7 +2861,7 @@
       "nom": "Gauffres",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["desserts"],
       "lien": null,
       "tempsPreparationMinutes": 30,
       "ingredients": [
@@ -2890,7 +2890,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 10,
@@ -2915,7 +2915,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 30,
@@ -2949,7 +2949,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": null,
       "tempsPreparationMinutes": 75,
@@ -3229,7 +3229,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "dessert"
+        "desserts"
       ],
       "lien": "https://www.cookomix.com/recherche/Charlotte/",
       "tempsPreparationMinutes": 20,
@@ -3313,7 +3313,7 @@
       "nom": "Saumon Tandoori",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes"],
       "lien": null,
       "tempsPreparationMinutes": 20,
       "ingredients": [

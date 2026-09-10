@@ -11,6 +11,7 @@ import SwiftData
 /// Écran affichant la planification de la semaine : date, nombre de parts et recettes prévues.
 struct SemaineListView: View {
     @Environment(\.modelContext) private var context
+    @State private var recettePDFSelectionnee: RecipePDFSelection?
 
     private func dateEnFrancais(_ date: Date) -> String {
         let dateFormatee = date.formatted(
@@ -98,10 +99,35 @@ struct SemaineListView: View {
                         // Liste des recettes planifiées
                         ForEach(semaine.recettes) { planification in
                             if let recette = planification.recette {
-                                HStack {
-                                    Text(recette.nom)
-                                    Spacer()
-                                    Text("\(planification.nombreDeParts) parts")
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack {
+                                        Text(recette.nom)
+                                        Spacer()
+                                        Text("\(planification.nombreDeParts) parts")
+                                    }
+
+                                    if let lien = recette.lien {
+                                        Link(destination: lien) {
+                                            Label("Voir la recette en ligne", systemImage: "safari")
+                                                .font(.caption)
+                                        }
+                                        .foregroundStyle(.blue)
+                                    }
+
+                                    if let recipeID = RecipePDFPages.id(forRecipeName: recette.nom),
+                                       let page = RecipePDFPages.byID[recipeID] {
+                                        Button {
+                                            recettePDFSelectionnee = RecipePDFSelection(
+                                                nom: recette.nom,
+                                                page: page
+                                            )
+                                        } label: {
+                                            Label("Voir dans le PDF · p. \(page)", systemImage: "doc.text.magnifyingglass")
+                                                .font(.caption)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .foregroundStyle(.blue)
+                                    }
                                 }
                             }
                         }
@@ -136,6 +162,9 @@ struct SemaineListView: View {
         }
         .sheet(item: $semaineAEditer) { semaine in
             EditSemaineView(semaine: semaine)
+        }
+        .sheet(item: $recettePDFSelectionnee) { selection in
+            RecipePDFView(recipeName: selection.nom, pageNumber: selection.page)
         }
         .sheet(isPresented: $afficherInformations) {
             NavigationStack {

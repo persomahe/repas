@@ -49,4 +49,55 @@ enum RecipePDFPages {
         "saute-porc-au": 72,
         "mini-muffins-aux": 75
     ]
+    
+    static func id(forRecipeName name: String) -> String? {
+        let idsByName: [String: String] = [
+            "Zarzuela": "zarzuela",
+            "Perles Japon Coco": "perles-japon-coco",
+            "Sauce Barbecue": "sauce-barbecue-bbq",
+            "Paella Valence": "paella-valence",
+            "Salade de Crevettes": "salacrevette",
+            "Verrines Crevettes": "verrines-crevettes",
+            "Roti Orlof": "roti-orlof",
+            "Œufs A La Neige Coulis de mangue": "oeufs-a-la-neige",
+            "Sashimi": "sashimi",
+            "Choux Vert A La Viande": "choux-vert-a-la",
+            "Paella": "paella",
+            "Risotto Potiron": "risotto-potiron",
+            "Veloute Potiron": "veloute-potiron",
+            "Veloute Petits Pois": "veloute-petits-pois",
+            "Encornets au balsamique": "encornets",
+            "Rouleaux De Printemps": "rouleaux-de",
+            "Sauce Aux Oignons & raisins secs - Couscous": "sauce-aux-oignons",
+            "Couscous Aux Merguez": "couscous-merguez",
+            "Pot-Au-Feu": "pot-au-feu",
+            "Chirachi Au Riz": "chirachi-au-riz",
+            "Punch Planteur": "punch-planteur",
+            "Sangria Rouge": "sangria-rouge",
+            "Lasagne Poisson": "lasagne-poisson",
+            "Quiche Lorraine": "quiche-lorraine",
+            "Tarte Pesto Legumes": "tarte-pesto-legumes",
+            "Mont D’Or Au Four": "mont-dor-au-four",
+            "Gateau Aux Pommes": "gateau-aux-pommes",
+            "Pad Thaï": "pad-thai",
+            "Muffins Au Saint Nectaire": "muffins-au-saint",
+            "Muffins": "muffins",
+            "Gauffres": "gauffres",
+            "Gateau A La Creme de marron": "gateau-a-la-creme",
+            "Gateau Semoule": "gateau-semoule",
+            "Canneles Bordelais": "canneles-bordelais",
+            "Kouign Amann": "kouign-amann-de",
+            "Pate A Pizza": "pate-a-pizza",
+            "Gratin Patates Douces": "gratin-patates",
+            "Feuilleté Epinards & Féta": "feuillete-epinards",
+            "Taboule": "taboule",
+            "Roules Au Chorizo": "roules-au-chorizo",
+            "Saumon Tandoori": "saumon-tandoori",
+            "Pommes Au Four": "pommes-au-four",
+            "Grenailles A L’Ail En": "grenailles-a-lail-en",
+            "Saute Porc Au Chou Vert": "saute-porc-au",
+            "Mini-Muffins Aux pépites de Chocolat": "mini-muffins-aux"
+        ]
+        return idsByName[name]
+    }
 }
