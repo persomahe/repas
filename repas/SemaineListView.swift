@@ -12,6 +12,7 @@ import SwiftData
 struct SemaineListView: View {
     @Environment(\.modelContext) private var context
     @State private var recettePDFSelectionnee: RecipePDFSelection?
+    @State private var recetteAEditer: Recette?
 
     private func dateEnFrancais(_ date: Date) -> String {
         let dateFormatee = date.formatted(
@@ -67,19 +68,24 @@ struct SemaineListView: View {
                 ForEach(semaines) { semaine in
                     Section {
                         VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                // Date de la semaine
-                                Label(dateEnFrancais(semaine.date), systemImage: "calendar")
-                                    .font(.headline)
-                                Spacer()
-
+                            HStack(alignment: .top) {
                                 Button {
                                     semaineAEditer = semaine
                                 } label: {
-                                    Image(systemName: "pencil")
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Label(dateEnFrancais(semaine.date), systemImage: "calendar")
+                                            .font(.headline)
+
+                                        Label("\(semaine.nombreTotalDeParts) parts totales à préparer", systemImage: "person.2")
+                                            .font(.subheadline)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
                                 .accessibilityLabel("Modifier la semaine du \(dateEnFrancais(semaine.date))")
+                                .accessibilityHint("Ouvre la modification de cette semaine")
 
                                 Button {
                                     semaineASupprimer = semaine
@@ -88,12 +94,8 @@ struct SemaineListView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .foregroundStyle(Color.red)
-                                .accessibilityLabel("Supprimer la semaine")
+                                .accessibilityLabel("Supprimer la semaine du \(dateEnFrancais(semaine.date))")
                             }
-                            // Nombre total de parts à préparer
-                            Label("\(semaine.nombreTotalDeParts) parts totales à préparer", systemImage: "person.2")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
                         }
 
                         // Liste des recettes planifiées
@@ -104,6 +106,10 @@ struct SemaineListView: View {
                                         Text(recette.nom)
                                         Spacer()
                                         Text("\(planification.nombreDeParts) parts")
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        recetteAEditer = recette
                                     }
 
                                     if let lien = recette.lien {
@@ -163,6 +169,9 @@ struct SemaineListView: View {
         .sheet(item: $semaineAEditer) { semaine in
             EditSemaineView(semaine: semaine)
         }
+        .sheet(item: $recetteAEditer) { recette in
+            EditRecetteView(recette: recette)
+        }
         .sheet(item: $recettePDFSelectionnee) { selection in
             RecipePDFView(recipeName: selection.nom, pageNumber: selection.page)
         }
@@ -190,7 +199,7 @@ struct SemaineListView: View {
                             .font(.headline)
 
                         Text("""
-                        - Cliquer sur le crayon à droite de la date.
+                        - Cliquer sur la date ou le nombre de parts à préparer.
                         - Modifier les informations souhaitées.
                         - Cliquer sur Enregistrer pour enregistrer les modifications.\n
                         """)

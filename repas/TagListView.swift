@@ -91,14 +91,6 @@ struct TagListView: View {
             Spacer()
 
             Button {
-                tagAEditer = tag
-            } label: {
-                Image(systemName: "pencil")
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Modifier le tag \(tag.nom)")
-
-            Button {
                 tagASupprimer = tag
             } label: {
                 Image(systemName: "trash")
@@ -106,7 +98,14 @@ struct TagListView: View {
             .buttonStyle(.plain)
             .foregroundStyle(estTagUtilise(tag) ? Color.secondary : Color.red)
             .disabled(estTagUtilise(tag))
-            .accessibilityLabel(Text("Supprimer le tag"))
+            .accessibilityLabel(Text("Supprimer le tag \(tag.nom)"))
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            tagAEditer = tag
+        }
+        .accessibilityAction(named: Text("Modifier le tag")) {
+            tagAEditer = tag
         }
     }
 

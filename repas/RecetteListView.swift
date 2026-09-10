@@ -336,14 +336,6 @@ struct RecetteListView: View {
             Spacer()
 
             Button {
-                recetteAEditer = recette
-            } label: {
-                Image(systemName: "pencil")
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel("Modifier la recette \(recette.nom)")
-
-            Button {
                 recetteASupprimer = recette
             } label: {
                 Image(systemName: "trash")
@@ -351,6 +343,14 @@ struct RecetteListView: View {
             .buttonStyle(.plain)
             .foregroundStyle(Color.red)
             .accessibilityLabel(Text("Supprimer la recette"))
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            recetteAEditer = recette
+        }
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(named: Text("Modifier la recette")) {
+            recetteAEditer = recette
         }
     }
 
@@ -512,6 +512,9 @@ struct NouvelleRecetteView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
                             )
+                            .onTapGesture {
+                                ingredients.remove(at: index)
+                            }
                         }
                     }
                     .padding(.vertical, 8)
@@ -932,6 +935,9 @@ struct EditRecetteView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.secondarySystemBackground))
                             )
+                            .onTapGesture {
+                                ingredients.remove(at: index)
+                            }
                         }
                     }
                     .padding(.vertical, 8)

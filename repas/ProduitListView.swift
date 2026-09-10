@@ -171,14 +171,6 @@ struct ProduitListView: View {
 
             HStack(spacing: 14) {
                 Button {
-                    produitAEditer = produit
-                } label: {
-                    Image(systemName: "pencil")
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Modifier le produit \(produit.nom)")
-
-                Button {
                     produitASupprimer = produit
                 } label: {
                     Image(systemName: "trash")
@@ -186,7 +178,7 @@ struct ProduitListView: View {
                 .buttonStyle(.plain)
                 .foregroundStyle(estProduitUtilise(produit) ? Color.secondary : Color.red)
                 .disabled(estProduitUtilise(produit))
-                .accessibilityLabel(Text("Supprimer le produit"))
+                .accessibilityLabel(Text("Supprimer le produit \(produit.nom)"))
             }
         }
         .frame(maxWidth: .infinity, minHeight: 60)
@@ -195,6 +187,13 @@ struct ProduitListView: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color(.secondarySystemBackground))
         )
+        .contentShape(RoundedRectangle(cornerRadius: 12))
+        .onTapGesture {
+            produitAEditer = produit
+        }
+        .accessibilityAction(named: Text("Modifier le produit")) {
+            produitAEditer = produit
+        }
     }
 
     private func estProduitUtilise(_ produit: Produit) -> Bool {
