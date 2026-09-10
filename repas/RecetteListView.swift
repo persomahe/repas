@@ -239,6 +239,14 @@ struct RecetteListView: View {
                 Text(recette.nom)
                     .font(.headline)
                     .foregroundStyle(.orange)
+                
+                if let lien = recette.lien {
+                        Link(destination: lien) {
+                            Label("Voir la recette", systemImage: "safari")
+                                .font(.caption)
+                        }
+                        .foregroundStyle(.blue)
+                    }
 
                 HStack(spacing: 12) {
                     Label("\(recette.nombreDeParts) parts", systemImage: "person.2")
