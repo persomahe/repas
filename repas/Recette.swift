@@ -79,12 +79,21 @@ final class IngredientRecette {
     /// Produit utilisé
     var produit: Produit?
 
-    /// Quantité nécessaire (l'unité pourra être ajoutée plus tard)
+    /// Quantité nécessaire.
     var quantite: Double
 
-    init(recette: Recette? = nil, produit: Produit? = nil, quantite: Double = 1) {
+    /// Unité issue du catalogue initial (g, kg, ml, cl ou l).
+    var unite: String
+
+    init(
+        recette: Recette? = nil,
+        produit: Produit? = nil,
+        quantite: Double = 1,
+        unite: String = ""
+    ) {
         self.recette = recette
         self.produit = produit
         self.quantite = quantite
+        self.unite = unite
     }
 }
