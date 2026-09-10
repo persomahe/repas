@@ -19,6 +19,7 @@ struct RecetteListView: View {
     @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     @State private var recherche = ""
+    @FocusState private var rechercheEstFocalisee: Bool
     @State private var tagSelectionne: Tag?
     @State private var saisonSelectionnee: Saison?
 
@@ -137,6 +138,12 @@ struct RecetteListView: View {
         .scrollContentBackground(.hidden)
         .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .searchable(text: $recherche, prompt: "Nom d'une recette ou d'un produit")
+        .searchFocused($rechercheEstFocalisee)
+        .onAppear {
+            DispatchQueue.main.async {
+                rechercheEstFocalisee = true
+            }
+        }
         .navigationTitle("Recettes")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {

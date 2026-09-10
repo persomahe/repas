@@ -35,6 +35,7 @@ struct ProduitListView: View {
 
     /// Texte saisi dans le filtre par nom.
     @State private var rechercheNom = ""
+    @FocusState private var rechercheNomEstFocalisee: Bool
 
     /// Produits correspondant au nom recherché.
     private var produitsFiltres: [Produit] {
@@ -69,6 +70,12 @@ struct ProduitListView: View {
         .scrollContentBackground(.hidden)
         .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
+        .searchFocused($rechercheNomEstFocalisee)
+        .onAppear {
+            DispatchQueue.main.async {
+                rechercheNomEstFocalisee = true
+            }
+        }
         .navigationTitle("Produits")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
