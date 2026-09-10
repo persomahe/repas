@@ -36,48 +36,17 @@ struct CourseListView: View {
         }
     }
 
-    /// Ingrédients déjà ajoutés, fusionnés par produit
+    /// Ingrédients déjà ajoutés, issus de l'état persisté de la course.
     private var dejaAjoutes: [IngredientAgrege] {
-        guard course.modelContext != nil else {
-            assertionFailure("CourseListView reçoit une Course non attachée au ModelContext")
-            return []
+        course.ingredients.compactMap { ingredient in
+            guard let produit = ingredient.produit, ingredient.quantite > 0 else { return nil }
+            return IngredientAgrege(
+                id: produit.persistentModelID,
+                produit: produit,
+                quantite: ingredient.quantite
+            )
         }
-
-        var fusion: [PersistentIdentifier: IngredientAgrege] = [:]
-
-        func ajouter(_ produit: Produit, quantite: Double) {
-            let id = produit.persistentModelID
-            if var element = fusion[id] {
-                element.quantite += quantite
-                fusion[id] = element
-            } else {
-                fusion[id] = IngredientAgrege(id: id, produit: produit, quantite: quantite)
-            }
-        }
-
-        // 1. Ingrédients déjà enregistrés dans la course
-        for ingredient in course.ingredients {
-            guard let produit = ingredient.produit else { continue }
-            ajouter(produit, quantite: ingredient.quantite)
-        }
-
-        // 2. Ingrédients calculés à partir des recettes de la semaine
-        if let semaine = course.semaine {
-            for planification in semaine.recettes {
-                guard let recette = planification.recette,
-                      recette.nombreDeParts > 0 else { continue }
-
-                let ratio = Double(planification.nombreDeParts) / Double(recette.nombreDeParts)
-
-                for ingredient in recette.ingredients {
-                    guard let produit = ingredient.produit else { continue }
-                    ajouter(produit, quantite: ingredient.quantite * ratio)
-                }
-            }
-        }
-
-        return Array(fusion.values)
-            .sorted { $0.produit.nom < $1.produit.nom }
+        .sorted { $0.produit.nom < $1.produit.nom }
     }
 
     var body: some View {
@@ -201,10 +170,9 @@ struct CourseListView: View {
             .background(.clear)
         }
         .task {
-            guard tagSelectionne == nil else { return }
-            tagSelectionne = tousLesTags.first { tag in
-                tag.nom.compare("Récurrent", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
-            }
+            course.materialiserIngredientsHerites()
+            course.ingredients.forEach { $0.mettreAJourQuantite() }
+            try? modelContext.save()
         }
         .navigationTitle("Liste de courses")
         .toolbar {
@@ -267,16 +235,19 @@ struct CourseListView: View {
 
         withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
             if let ingredientExistant = course.ingredients.first(where: { $0.produit === produit }) {
-                ingredientExistant.quantite += produit.typeUnite.pas
+                ingredientExistant.quantiteManuelle += produit.typeUnite.pas
+                ingredientExistant.mettreAJourQuantite()
             } else {
                 let nouvelIngredient = IngredientCourse(
                     course: course,
                     produit: produit,
-                    quantite: produit.typeUnite.pas
+                    quantite: produit.typeUnite.pas,
+                    quantiteManuelle: produit.typeUnite.pas
                 )
                 modelContext.insert(nouvelIngredient)
                 course.ingredients.append(nouvelIngredient)
             }
+            try? modelContext.save()
 
             let id = produit.persistentModelID
             DispatchQueue.main.async {
@@ -290,7 +261,7 @@ struct CourseListView: View {
         }
     }
 
-    /// Retire une unité du produit cliqué et supprime sa ligne à zéro.
+    /// Retire une unité, d'abord héritée des recettes, puis ajoutée manuellement.
     private func retirerDuPanier(_ produit: Produit) {
         guard course.modelContext != nil else {
             assertionFailure("Impossible de retirer: la Course n'est pas attachée au ModelContext")
@@ -305,14 +276,22 @@ struct CourseListView: View {
         let pas = produit.typeUnite.pas
         carteAnimee = id
 
-        if ingredient.quantite > pas {
+        if ingredient.quantiteHeriteeRestante > 0 {
+            ingredient.quantiteHeriteeRestante = max(0, ingredient.quantiteHeriteeRestante - pas)
+        } else {
+            ingredient.quantiteManuelle = max(0, ingredient.quantiteManuelle - pas)
+        }
+        ingredient.mettreAJourQuantite()
+        try? modelContext.save()
+
+        if ingredient.quantite > 0 {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.65)) {
-                ingredient.quantite -= pas
+                // La quantité est déjà persistée et recalculée ci-dessus.
             }
         } else {
             // Laisse le zoom être visible avant de retirer la dernière unité.
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                guard course.ingredients.contains(where: { $0.produit === produit }) else {
+                guard course.ingredients.contains(where: { $0.persistentModelID == ingredient.persistentModelID }) else {
                     reinitialiserAnimationCarte(id: id)
                     return
                 }
@@ -321,6 +300,7 @@ struct CourseListView: View {
                     modelContext.delete(ingredient)
                     course.ingredients.removeAll { $0.persistentModelID == ingredient.persistentModelID }
                 }
+                try? modelContext.save()
                 reinitialiserAnimationCarte(id: id)
             }
         }

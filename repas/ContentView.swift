@@ -208,6 +208,8 @@ private struct CourseDestinationView: View {
 
             let nouvelleCourse = Course(semaine: semaine)
             modelContext.insert(nouvelleCourse)
+            nouvelleCourse.materialiserIngredientsHerites()
+            try? modelContext.save()
             course = nouvelleCourse
         }
     }
