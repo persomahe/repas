@@ -33,7 +33,7 @@ final class Course {
     }
 
     /// Copie une seule fois les besoins de la semaine dans la liste persistée.
-    func materialiserIngredientsHerites() {
+    func materialiserIngredientsHerites(dans context: ModelContext) {
         guard !ingredientsHeritesMaterialises, let semaine else { return }
 
         var besoins: [PersistentIdentifier: (produit: Produit, quantite: Double)] = [:]
@@ -62,20 +62,48 @@ final class Course {
                 ingredient.quantiteHeriteeDemandee = besoin.quantite
                 ingredient.quantiteHeriteeRestante = besoin.quantite
             } else {
-                ingredients.append(
-                    IngredientCourse(
-                        course: self,
-                        produit: besoin.produit,
-                        quantite: besoin.quantite,
-                        quantiteHeriteeDemandee: besoin.quantite,
-                        quantiteHeriteeRestante: besoin.quantite,
-                        quantiteManuelle: 0
-                    )
+                let ingredient = IngredientCourse(
+                    produit: besoin.produit,
+                    quantite: besoin.quantite,
+                    quantiteHeriteeDemandee: besoin.quantite,
+                    quantiteHeriteeRestante: besoin.quantite,
+                    quantiteManuelle: 0
                 )
+                context.insert(ingredient)
+                ingredient.course = self
+                ingredients.append(ingredient)
             }
         }
 
         ingredientsHeritesMaterialises = true
+    }
+
+    /// Transfère vers cette course les quantités manuelles restantes d'une ancienne course.
+    /// Les quantités héritées des anciennes recettes ne sont pas transférées.
+    func transfererQuantitesManuellesDepuis(_ ancienneCourse: Course, dans context: ModelContext) {
+        for ancienIngredient in ancienneCourse.ingredients {
+            guard let produit = ancienIngredient.produit,
+                  ancienIngredient.quantiteManuelle > 0 else {
+                continue
+            }
+
+            let quantite = ancienIngredient.quantiteManuelle
+            if let ingredientExistant = ingredients.first(where: {
+                $0.produit?.persistentModelID == produit.persistentModelID
+            }) {
+                ingredientExistant.quantiteManuelle += quantite
+                ingredientExistant.mettreAJourQuantite()
+            } else {
+                let ingredient = IngredientCourse(
+                    produit: produit,
+                    quantite: quantite,
+                    quantiteManuelle: quantite
+                )
+                context.insert(ingredient)
+                ingredient.course = self
+                ingredients.append(ingredient)
+            }
+        }
     }
 }
 

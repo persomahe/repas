@@ -169,11 +169,6 @@ struct CourseListView: View {
             .scrollContentBackground(.hidden)
             .background(.clear)
         }
-        .task {
-            course.materialiserIngredientsHerites()
-            course.ingredients.forEach { $0.mettreAJourQuantite() }
-            try? modelContext.save()
-        }
         .navigationTitle("Liste de courses")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

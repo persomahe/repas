@@ -183,13 +183,12 @@ private struct CourseDestinationView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var courses: [Course]
     @State private var course: Course?
+    @State private var preparationEnCours = false
+    @State private var erreurPreparation: String?
 
     init(semaine: Semaine) {
         self.semaine = semaine
-        let semaineID = semaine.persistentModelID
-        _courses = Query(filter: #Predicate<Course> { course in
-            course.semaine?.persistentModelID == semaineID
-        })
+        _courses = Query()
     }
 
     var body: some View {
@@ -200,17 +199,77 @@ private struct CourseDestinationView: View {
                 ProgressView("Préparation de la liste...")
             }
         }
-        .task {
-            if let existante = courses.first {
-                course = existante
-                return
-            }
+        .task { @MainActor in
+            guard !preparationEnCours, course == nil else { return }
+            preparationEnCours = true
+            defer { preparationEnCours = false }
 
-            let nouvelleCourse = Course(semaine: semaine)
-            modelContext.insert(nouvelleCourse)
-            nouvelleCourse.materialiserIngredientsHerites()
-            try? modelContext.save()
-            course = nouvelleCourse
+            do {
+                let coursesDisponibles = try modelContext.fetch(
+                    FetchDescriptor<Course>()
+                )
+                let semainesDisponibles = try modelContext.fetch(
+                    FetchDescriptor<Semaine>()
+                )
+                let datesParSemaineID: [PersistentIdentifier: Date] =
+                    Dictionary(uniqueKeysWithValues: semainesDisponibles.map {
+                        ($0.persistentModelID, $0.date)
+                    })
+                let semaineID = semaine.persistentModelID
+
+                guard let dateSemaine = datesParSemaineID[semaineID] else {
+                    throw NSError(
+                        domain: "CourseDestinationView",
+                        code: 1,
+                        userInfo: [NSLocalizedDescriptionKey: "La semaine sélectionnée est introuvable."]
+                    )
+                }
+
+                if let existante = coursesDisponibles.first(where: {
+                    $0.semaine?.persistentModelID == semaineID
+                }) {
+                    course = existante
+                    return
+                }
+
+                let ancienneCourse = coursesDisponibles
+                    .compactMap { candidate -> (course: Course, date: Date)? in
+                        guard let candidateSemaineID = candidate.semaine?.persistentModelID,
+                              let candidateDate = datesParSemaineID[candidateSemaineID],
+                              candidateDate < dateSemaine else {
+                            return nil
+                        }
+                        return (course: candidate, date: candidateDate)
+                    }
+                    .max { gauche, droite in
+                        gauche.date < droite.date
+                    }?
+                    .course
+
+                let nouvelleCourse = Course(semaine: semaine)
+                modelContext.insert(nouvelleCourse)
+
+                if let ancienneCourse {
+                    nouvelleCourse.transfererQuantitesManuellesDepuis(ancienneCourse, dans: modelContext)
+                }
+
+                nouvelleCourse.materialiserIngredientsHerites(dans: modelContext)
+                nouvelleCourse.ingredients.forEach { $0.mettreAJourQuantite() }
+
+                try modelContext.save()
+                course = nouvelleCourse
+            } catch {
+                erreurPreparation = String(describing: error)
+                print("Erreur préparation course: \(String(reflecting: error))")
+            }
+        }
+        .alert("Impossible d’ouvrir la liste de courses", isPresented: Binding(
+            get: { erreurPreparation != nil },
+            set: { if !$0 { erreurPreparation = nil } }
+        )) {
+            Button("OK", role: .cancel) { erreurPreparation = nil }
+        } message: {
+            Text(erreurPreparation ?? "Une erreur est survenue.")
         }
     }
 }
