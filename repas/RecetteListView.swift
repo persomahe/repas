@@ -30,6 +30,7 @@ struct RecetteListView: View {
 
     /// Recette sélectionnée pour suppression (avec confirmation).
     @State private var recetteASupprimer: Recette?
+    @State private var recettePDFSelectionnee: RecipePDFSelection?
 
     @State private var afficherInformations = false
 
@@ -48,6 +49,57 @@ struct RecetteListView: View {
                 recette.saisons.contains(saison)
             } ?? true
             return correspondAuTexte && correspondAuTag && correspondALaSaison
+        }
+    }
+
+    private func recipeID(for recette: Recette) -> String {
+        switch recette.nom {
+        case "Zarzuela": return "zarzuela"
+        case "Perles Japon Coco": return "perles-japon-coco"
+        case "Sauce Barbecue": return "sauce-barbecue-bbq"
+        case "Paella Valence": return "paella-valence"
+        case "Salade de Crevettes": return "salacrevette"
+        case "Verrines Crevettes": return "verrines-crevettes"
+        case "Roti Orlof": return "roti-orlof"
+        case "Œufs A La Neige Coulis de mangue": return "oeufs-a-la-neige"
+        case "Sashimi": return "sashimi"
+        case "Choux Vert A La Viande": return "choux-vert-a-la"
+        case "Paella": return "paella"
+        case "Risotto Potiron": return "risotto-potiron"
+        case "Veloute Potiron": return "veloute-potiron"
+        case "Veloute Petits Pois": return "veloute-petits-pois"
+        case "Encornets au balsamique": return "encornets"
+        case "Rouleaux De Printemps": return "rouleaux-de"
+        case "Sauce Aux Oignons & raisins secs - Couscous": return "sauce-aux-oignons"
+        case "Couscous Aux Merguez": return "couscous-merguez"
+        case "Pot-Au-Feu": return "pot-au-feu"
+        case "Chirachi Au Riz": return "chirachi-au-riz"
+        case "Punch Planteur": return "punch-planteur"
+        case "Sangria Rouge": return "sangria-rouge"
+        case "Lasagne Poisson": return "lasagne-poisson"
+        case "Quiche Lorraine": return "quiche-lorraine"
+        case "Tarte Pesto Legumes": return "tarte-pesto-legumes"
+        case "Mont D’Or Au Four": return "mont-dor-au-four"
+        case "Gateau Aux Pommes": return "gateau-aux-pommes"
+        case "Pad Thaï": return "pad-thai"
+        case "Muffins Au Saint Nectaire": return "muffins-au-saint"
+        case "Muffins": return "muffins"
+        case "Gauffres": return "gauffres"
+        case "Gateau A La Creme de marron": return "gateau-a-la-creme"
+        case "Gateau Semoule": return "gateau-semoule"
+        case "Canneles Bordelais": return "canneles-bordelais"
+        case "Kouign Amann": return "kouign-amann-de"
+        case "Pate A Pizza": return "pate-a-pizza"
+        case "Gratin Patates Douces": return "gratin-patates"
+        case "Feuilleté Epinards & Féta": return "feuillete-epinards"
+        case "Taboule": return "taboule"
+        case "Roules Au Chorizo": return "roules-au-chorizo"
+        case "Saumon Tandoori": return "saumon-tandoori"
+        case "Pommes Au Four": return "pommes-au-four"
+        case "Grenailles A L’Ail En": return "grenailles-a-lail-en"
+        case "Saute Porc Au Chou Vert": return "saute-porc-au"
+        case "Mini-Muffins Aux pépites de Chocolat": return "mini-muffins-aux"
+        default: return ""
         }
     }
 
@@ -230,6 +282,9 @@ struct RecetteListView: View {
                 )
             }
         }
+        .sheet(item: $recettePDFSelectionnee) { selection in
+            RecipePDFView(recipeName: selection.nom, pageNumber: selection.page)
+        }
     }
 
     @ViewBuilder
@@ -239,27 +294,28 @@ struct RecetteListView: View {
                 Text(recette.nom)
                     .font(.headline)
                     .foregroundStyle(.orange)
-                
+
                 if let lien = recette.lien {
-                        Link(destination: lien) {
-                            Label("Voir la recette", systemImage: "safari")
-                                .font(.caption)
-                        }
-                        .foregroundStyle(.blue)
+                    Link(destination: lien) {
+                        Label("Voir la recette en ligne", systemImage: "safari")
+                            .font(.caption)
                     }
-
-                HStack(spacing: 12) {
-                    Label("\(recette.nombreDeParts) parts", systemImage: "person.2")
-                    Label("\(recette.tempsPreparationMinutes) min", systemImage: "clock")
+                    .foregroundStyle(.blue)
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
 
-                if !recette.saisons.isEmpty {
-                    Text(recette.saisons.map(\.rawValue).joined(separator: " · "))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                if let page = RecipePDFPages.byID[recipeID(for: recette)] {
+                    Button {
+                        recettePDFSelectionnee = RecipePDFSelection(nom: recette.nom, page: page)
+                    } label: {
+                        Label("Voir dans le PDF · p. \(page)", systemImage: "doc.text.magnifyingglass")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.blue)
                 }
+
+                // (.caption)
+                // }
 
                 if !recette.tags.isEmpty {
                     HStack(spacing: 6) {
