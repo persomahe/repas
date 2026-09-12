@@ -23,34 +23,19 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                Color(hex: "#FEF6E7")
+                Image("fondPage")
+                    .resizable()
+                    .scaledToFill()
                     .ignoresSafeArea()
+                    .offset(y: -70)
 
-                GeometryReader { geometry in
-                    Ellipse()
-                        .fill(
-                            LinearGradient(
-                                colors: [.orange, .pink],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .frame(
-                            width: geometry.size.width * 1.4,
-                            height: 280
-                        )
-                        .offset(
-                            x: -geometry.size.width * 0.2,
-                            y: -36
-                        )
-                }
-                .ignoresSafeArea()
+                VStack(spacing: 16) {
+                    Spacer()
 
-                VStack(spacing: 12) {
                     NavigationLink("Planifier ma semaine") {
                         SemaineListView()
                     }
-                    .buttonStyle(CarteButtonStyle(couleur: .purple))
+                    .buttonStyle(CarteButtonStyle(couleur: Color(hex: "#C3360B")))
 
                     NavigationLink("Ma liste de courses") {
                         if let semaine = derniereSemaine {
@@ -59,44 +44,46 @@ struct ContentView: View {
                             Text("Aucune semaine planifiée.")
                         }
                     }
-                    .buttonStyle(CarteButtonStyle(couleur: .green))
-                    
-                    Spacer()
-                    Text("🛒") // charriot
-                        .font(.system(size: 70))
-                    Spacer()
+                    .buttonStyle(CarteButtonStyle(couleur: Color(hex: "#F17D58")))
 
-                    
+                    Image(systemName: "basket.fill")
+                        .font(.system(size: 70))
+                        .foregroundStyle(Color(hex: "#C3360B"))
+                        .padding(.vertical, 34)
+
                     NavigationLink("Voir les recettes") {
                         RecetteListView()
                     }
                     .buttonStyle(CarteButtonStyle(couleur: .orange))
 
-                    Spacer()
-                    
                     Text("Paramètres")
-                    .padding(.top)
-                    .font(.subheadline)
-                    .fontWeight(.regular)
+                        .font(.subheadline)
+                        .padding(.top, 24)
 
                     NavigationLink("Voir les tags") {
                         TagListView()
                     }
+                    .foregroundStyle(.white)
                     .buttonStyle(.borderedProminent)
-                    .padding(.top)
+                    .tint(.orange)
 
                     NavigationLink("Voir les produits") {
                         ProduitListView()
                     }
+                    .foregroundStyle(.white)
                     .buttonStyle(.borderedProminent)
+                    .tint(Color(hex: "#B3462A"))
 
+                    Spacer()
                 }
-                .padding()
+                .padding(.horizontal)
+                .safeAreaPadding(.bottom)
             }
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text("Gestion des repas")
                         .font(.system(size: 36, weight: .bold))
+                        .foregroundStyle(Color(hex: "#C3360B"))
                 }
 
                 ToolbarItem(placement: .topBarTrailing) {
@@ -104,6 +91,8 @@ struct ContentView: View {
                         afficherInformations = true
                     } label: {
                         Image(systemName: "questionmark.circle")
+                            .foregroundStyle(Color(hex: "#B3462A"))
+
                     }
                     .accessibilityLabel("Afficher les informations")
                 }
@@ -273,6 +262,8 @@ private struct CourseDestinationView: View {
         }
     }
 }
+
+// Supprimer l’extension Color locale : init(hex:) est déjà définie dans TagListView.swift.
 
 #Preview {
     ContentView()
