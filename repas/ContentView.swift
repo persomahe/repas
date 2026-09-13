@@ -101,13 +101,12 @@ struct ContentView: View {
                             Text("""
                             - Définir les tags.
                             - Définir vos produits.
-                            - Créer vos recettes.\n
+                            - Créer vos recettes en cliquant sur le bouton orange.\n
                             """)
                             Text("Ordre des opérations pour une liste de courses")
                                 .font(.headline)
                             Text("""
-                            - Définissez vos recettes en cliquant sur le bouton orange.
-                            - Planifiez votre semaine.
+                            - Planifiez votre semaine : bouton rouge.
                             - Puis votre liste de courses :
                             Elle héritera des ingrédients des recettes planifiées pour la semaine, auxquels vous pourrez ajouter des produits supplémentaires.
                             """)

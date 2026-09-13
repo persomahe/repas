@@ -193,38 +193,39 @@ struct RecetteListView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Text("""
                         - Les recettes ne contiennent que les ingrédients essentiels à la liste de courses : le sel, le poivre, l’ail, la sauce tomate… sont déjà dans les placards !)
-                        - Tagger les recettes est important pour pouvoir les filtrer.\n
+                        - Tagger les recettes est important pour pouvoir les filtrer par l'intermédiaire du menu Tag (icone en haut à gauche).\n
                         """)
 
-                        Text("Nouvelle recette +")
+                        Text("Nouvelle recette → +")
                             .font(.headline)
 
                         Text("""
-                        - Entrer le nom de la recette.
-                        - Cliquer sur Recette\t\tÀ choisir…
-                        - Choisir un ingrédient.
-                        - Préciser la quantité correspondant au nombre de parts de la recette.
-                        - Cliquer sur Ajouter l’ingrédient.
-                        - Recommencer pour tous les ingrédients.
-                        - Cliquer sur Ajouter pour enregistrer la recette.
-                        - Spécifier les tags.\n
+                        - Entrez le nom de la recette.
+                        - Cliquez sur Recette\t\tÀ choisir…
+                        - Choisissez un produit.
+                        - Précisez la quantité correspondant au nombre de parts de la recette.
+                        - Cliquez sur Ajouter l’ingrédient.
+                        - Recommencez pour tous les ingrédients.
+                        Vous pouvez supprimer un produit déjà ajouté en cliquant dessus (carré).
+                        - Spécifiez les tags.
+                        - Cliquez sur Ajouter pour enregistrer la recette.\n
                         """)
 
                         Text("Modifier une recette")
                             .font(.headline)
 
                         Text("""
-                        - Cliquer sur le crayon à droite de la recette.
-                        - Modifier les informations souhaitées.
-                        - Cliquer sur Enregistrer pour enregistrer les modifications.\n
+                        - Cliquez sur le nom de la recette à éditer.
+                        - Modifiez les informations souhaitées.
+                        - Cliquez sur Enregistrer pour enregistrer les modifications.\n
                         """)
 
                         Text("Supprimer une recette")
                             .font(.headline)
 
                         Text("""
-                        - Cliquer sur la poubelle à droite de la recette.
-                        - Confirmer la suppression.
+                        - Glissez à gauche la recette que vous souhaitez supprimer. Une fenêtre de confirmation s'ouvre.
+                        - Confirmez la suppression.
                         """)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)

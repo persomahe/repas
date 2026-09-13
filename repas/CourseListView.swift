@@ -170,24 +170,31 @@ struct CourseListView: View {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         let texte = AttributedString("""
-                        - Les ingrédients « Déjà ajoutés » sont ceux hérités automatiquement des recettes pour cette semaine.
-                        - Les ingrédients « À prendre » sont tous les produits existants, filtrables par tag (menu bleu).
+                        - Les ingrédients « Déjà ajoutés » sont ceux hérités automatiquement des recettes pour cette semaine, auxquels vous ajoutez les produits que vous souhaitez.
+                        - Les ingrédients « À prendre » sont tous les produits existants, filtrables par tag (menu bleu - Tous).\n
                         """)
-
                         Text(texte)
 
                         Text("Fonctionnement général")
                             .font(.headline)
-
-                        let details = AttributedString("""
-                        - Pour ajouter un ingrédient à la liste de courses, clique directement sur un produit (le carré) dans la section « À prendre » :
-                        1 clic = ajoute 1 unité, 2 clics = ajoute 2 unités, etc ;
-                        1 unité = 1 produit ou 100 gr de produit.
-                        - Pour retirer un ingrédient de la liste de courses, clique directement sur un produit (le carré) dans la section « Déjà ajoutés » :
-                        1 clic = retire 1 unité, 2 clics = retire 2 unités, etc ;
+                        Text("Ajout :")
+                            .underline()
+                        let texte2 = AttributedString("""
+                        - Pour ajouter un ingrédient à la liste de courses, cliquez directement sur un produit (le carré) dans la section « À prendre » :
+                        1 clic = ajoute 1 unité,
+                        2 clics = ajoute 2 unités, ...
                         1 unité = 1 produit ou 100 gr de produit.
                         """)
-                        Text(details)
+                        Text(texte2)
+                        Text("Suppression :")
+                            .underline()
+                        let texte3 = AttributedString("""
+                        - Pour retirer un ingrédient de la liste de courses, faites un clic sur un produit (le carré) dans la section « Déjà ajoutés » :
+                        1 clic = retire 1 unité,
+                        2 clics = retire 2 unités, ...
+                        1 unité = 1 produit ou 100 gr de produit.
+                        """)
+                        Text(texte3)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding()

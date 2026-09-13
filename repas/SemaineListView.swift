@@ -170,7 +170,7 @@ struct SemaineListView: View {
                         - Choissez une date (par défaut, la date du jour).
                         - Cliquez sur Recette\t\tA choisir...
                         - Puis le nombre de part pour cette semaine : les ingrédients dans la liste de courses seront mis à jour en fonction de ce nombre de parts.
-                        -Et cliquez sur + Ajouter la recette.
+                        - Et cliquez sur + Ajouter la recette.
                         - Répétez l'opération pour ajouter plusieurs recettes à la semaine.
                         - Enfin, enregistrez la semaine : elle sera ajoutée à la liste des semaines, et la liste de courses sera mise à jour automatiquement.\n
                         """)
@@ -178,16 +178,16 @@ struct SemaineListView: View {
                             .font(.headline)
 
                         Text("""
-                        - Cliquer sur la date ou le nombre de parts à préparer.
-                        - Modifier les informations souhaitées.
-                        - Cliquer sur Enregistrer pour enregistrer les modifications.\n
+                        - Cliquez sur la date ou le nombre de parts à préparer.
+                        - Modifiez les informations souhaitées.
+                        - Cliquez sur Enregistrer pour enregistrer les modifications.\n
                         """)
 
                         Text("Supprimer une Semaine planifiée")
                             .font(.headline)
 
                         Text("""
-                        - Cliquer sur la poubelle à droite de la date.
+                        - Glissez à gauche votre semaine depuis la date.
                         - Confirmer la suppression.
                         """)
                     }

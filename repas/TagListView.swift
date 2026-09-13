@@ -30,6 +30,8 @@ struct TagListView: View {
     /// Tag sélectionné pour suppression (avec confirmation).
     @State private var tagASupprimer: Tag?
 
+    @State private var afficherInformations = false
+
     var body: some View {
         ZStack {
             FondPageBackground()
@@ -49,12 +51,69 @@ struct TagListView: View {
                     ajoutEnCours = true
                 }
             }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    afficherInformations = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .accessibilityLabel("Afficher les informations")
+            }
         }
         .sheet(isPresented: $ajoutEnCours) {
             NouveauTagView()
         }
         .sheet(item: $tagAEditer) { tag in
             EditTagView(tag: tag)
+        }
+        .sheet(isPresented: $afficherInformations) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        let texte = AttributedString("""
+                        Liste des tags déjà enregistrés dans l'application.\n
+                        """)
+                        Text(texte)
+
+                        Text("Fonctionnement général")
+                            .font(.headline)
+                        Text("Ajout :")
+                            .underline()
+                        let texte2 = AttributedString("""
+                        - Cliquez sur + (en haut à droite) :
+                        saisissez son nom et sa couleur.
+                        - Les tags vous serviront à filtrer (trier) les produtits ou les recettes.
+                        """)
+                        Text(texte2)
+                        Text("Modification :")
+                            .underline()
+                        let texte3 = AttributedString("""
+                        - Cliquez sur un tag pour l'éditer.
+                        """)
+                        Text(texte3)
+                        Text("Suppression :")
+                            .underline()
+                        let texte4 = AttributedString("""
+                        - Pour supprimer un tag de la liste, glissez vers la gauche le tag : une demande de confirmation apparaîtra.
+                        - Vous pourrez supprimer un tag même s'il est utilisé par un produit ou une recette. Cela ne supprime que le tag.
+                        """)
+                        Text(texte4)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .navigationTitle("Informations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fermer") {
+                            afficherInformations = false
+                        }
+                    }
+                }
+                .tint(Color(hex: "#C3360B"))
+            }
         }
         .confirmationDialog(
             "Supprimer ce tag ?",

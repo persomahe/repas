@@ -37,6 +37,8 @@ struct ProduitListView: View {
     @State private var rechercheNom = ""
     @FocusState private var rechercheNomEstFocalisee: Bool
     
+    @State private var afficherInformations = false
+    
     //"Suppression impossible : le produit est utilisé par une ou plusieurs recettes."
     @State private var afficherErreurSuppression = false
 
@@ -126,12 +128,69 @@ struct ProduitListView: View {
                     ajoutEnCours = true
                 }
             }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    afficherInformations = true
+                } label: {
+                    Image(systemName: "questionmark.circle")
+                }
+                .accessibilityLabel("Afficher les informations")
+            }
         }
         .sheet(isPresented: $ajoutEnCours) {
             NouveauProduitView()
         }
         .sheet(item: $produitAEditer) { produit in
             EditProduitView(produit: produit)
+        }
+        .sheet(isPresented: $afficherInformations) {
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 12) {
+                        let texte = AttributedString("""
+                        Liste des produits (taggés) déjà enregistrés dans l'application.
+                        Le menu Tags (icone en haut à gauche) sert à filtrer (trier) les produits.\n
+                        """)
+                        Text(texte)
+
+                        Text("Fonctionnement général")
+                            .font(.headline)
+                        Text("Ajout :")
+                            .underline()
+                        let texte2 = AttributedString("""
+                        - Cliquez sur + (en haut à droite) :
+                        saisissez le nom, son type d'unité et le ou les tags que vous souhaitez associer à votre nouveau produit.
+                        """)
+                        Text(texte2)
+                        Text("Modification :")
+                            .underline()
+                        let texte3 = AttributedString("""
+                        - Cliquez sur un produit (le carré) pour l'éditer.
+                        """)
+                        Text(texte3)
+                        Text("Suppression :")
+                            .underline()
+                        let texte4 = AttributedString("""
+                        - Pour supprimer un produit de la liste, faites un clic maintenu sur un produit (le carré) : une demande de confirmation apparaîtra.
+                        - Vous ne pourrez supprimer un produit que s'il n'est utilisé par aucune recette.
+                        """)
+                        Text(texte4)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                }
+                .navigationTitle("Informations")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Fermer") {
+                            afficherInformations = false
+                        }
+                    }
+                }
+                .tint(Color(hex: "#C3360B"))
+            }
         }
         .confirmationDialog(
             "Supprimer ce produit ?",
@@ -171,7 +230,6 @@ struct ProduitListView: View {
                 )
             }
         }
-        
     }
 
     @ViewBuilder
@@ -258,7 +316,7 @@ struct NouveauProduitView: View {
     @State private var nom = ""
     @State private var typeUnite: TypeUnite = .piece
     @State private var tagsChoisis: Set<Tag> = []
-
+    
     /// Nom du dernier produit ajouté, pour afficher une confirmation
     @State private var dernierAjout: String?
 
