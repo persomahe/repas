@@ -23,19 +23,14 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                Image("fondPage")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .offset(y: -70)
-
+                FondPageBackground()
                 VStack(spacing: 16) {
                     Spacer()
 
                     NavigationLink("Planifier ma semaine") {
                         SemaineListView()
                     }
-                    .buttonStyle(CarteButtonStyle(couleur: Color(hex: "#C3360B")))
+                    .buttonStyle(CarteButtonStyle(couleur: Color(hex: "#C2360B")))
 
                     NavigationLink("Ma liste de courses") {
                         if let semaine = derniereSemaine {
@@ -138,7 +133,24 @@ struct ContentView: View {
     
 }
 
-//Création d'un style de bouton personnalisé pour les cartes
+// Arrière-plan partagé utilisé par toutes les vues de l'application.
+struct FondPageBackground: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Image("fondPage")
+                .resizable()
+                .scaledToFill()
+                .frame(width: geometry.size.width, height: geometry.size.height)
+//                .offset(y: -70)
+                .clipped()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+}
+
+// Création d'un style de bouton personnalisé pour les cartes
 struct CarteButtonStyle: ButtonStyle {
     let couleur: Color
         let couleurAppui: Color

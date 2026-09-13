@@ -8,16 +8,20 @@ struct RecipePDFView: View {
 
     var body: some View {
         NavigationStack {
-            RecipePDFKitView(pageNumber: pageNumber)
-                .navigationTitle(recipeName)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Fermer") {
-                            dismiss()
-                        }
+            ZStack {
+                FondPageBackground()
+                RecipePDFKitView(pageNumber: pageNumber)
+                    .background(Color.clear)
+            }
+            .navigationTitle(recipeName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Fermer") {
+                        dismiss()
                     }
                 }
+            }
         }
     }
 }

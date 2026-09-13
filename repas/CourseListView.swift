@@ -51,22 +51,7 @@ struct CourseListView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            Color(hex: "#FEF6E7")
-                .ignoresSafeArea()
-
-            GeometryReader { geometry in
-                Ellipse()
-                    .fill(
-                        LinearGradient(
-                            colors: [.green, .mint],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(width: geometry.size.width * 1.4, height: 280)
-                    .offset(x: -geometry.size.width * 0.2, y: -36)
-            }
-            .ignoresSafeArea()
+            FondPageBackground()
 
             List {
                 Section {
@@ -167,7 +152,7 @@ struct CourseListView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(.clear)
+            .listRowBackground(Color.clear)
         }
         .navigationTitle("Liste de courses")
         .toolbar {

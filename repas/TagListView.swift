@@ -31,13 +31,17 @@ struct TagListView: View {
     @State private var tagASupprimer: Tag?
 
     var body: some View {
-        List {
-            ForEach(tags.indices, id: \.self) { index in
-                tagRow(tags[index])
+        ZStack {
+            FondPageBackground()
+
+            List {
+                ForEach(tags.indices, id: \.self) { index in
+                    tagRow(tags[index])
+                }
             }
+            .scrollContentBackground(.hidden)
+            .listRowBackground(Color.clear)
         }
-        .scrollContentBackground(.hidden)
-        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .navigationTitle("Tags")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -181,7 +185,7 @@ struct NouveauTagView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .navigationTitle("Nouveau tag")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -247,7 +251,7 @@ struct EditTagView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .navigationTitle("Modifier le tag")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

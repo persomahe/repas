@@ -106,37 +106,16 @@ struct RecetteListView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-                Color(hex: "#FEF6E7")
-                    .ignoresSafeArea()
+            FondPageBackground()
 
-                GeometryReader { geometry in
-                    Ellipse()
-                        .fill(
-                            LinearGradient(
-                                colors: [.orange, .pink],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .frame(
-                            width: geometry.size.width * 1.4,
-                            height: 280
-                        )
-                        .offset(
-                            x: -geometry.size.width * 0.2,
-                            y: -36
-                        )
-                }
-                .ignoresSafeArea()
-            
-                List {
+            List {
                 ForEach(recettesFiltrees.indices, id: \.self) { index in
                     recetteRow(recettesFiltrees[index])
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+        .listRowBackground(Color.clear)
         .searchable(text: $recherche, prompt: "Nom d'une recette ou d'un produit")
         .searchFocused($rechercheEstFocalisee)
         .onAppear {
@@ -713,7 +692,7 @@ struct NouvelleRecetteView: View {
             }
             .font(.subheadline)
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .sheet(isPresented: $afficherSelectionProduit) {
                 NavigationStack {
                     List {
@@ -1146,7 +1125,7 @@ struct EditRecetteView: View {
             }
             .font(.subheadline)
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .sheet(isPresented: $afficherSelectionProduit) {
                 NavigationStack {
                     List {

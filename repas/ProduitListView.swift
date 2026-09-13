@@ -56,19 +56,23 @@ struct ProduitListView: View {
     }
 
     var body: some View {
-        List {
-            LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
-                spacing: 12
-            ) {
-                ForEach(produitsFiltres) { produit in
-                    produitRow(produit)
+        ZStack {
+            FondPageBackground()
+
+            List {
+                LazyVGrid(
+                    columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
+                    spacing: 12
+                ) {
+                    ForEach(produitsFiltres) { produit in
+                        produitRow(produit)
+                    }
                 }
+                .padding(.vertical, 8)
             }
-            .padding(.vertical, 8)
+            .scrollContentBackground(.hidden)
+            .listRowBackground(Color.clear)
         }
-        .scrollContentBackground(.hidden)
-        .background(Color(hex: "#FEF6E7").ignoresSafeArea())
         .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
         .searchFocused($rechercheNomEstFocalisee)
         .onAppear {
@@ -294,7 +298,7 @@ struct NouveauProduitView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .navigationTitle("Nouveau produit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -388,7 +392,7 @@ struct EditProduitView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#FEF6E7").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .navigationTitle("Modifier le produit")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

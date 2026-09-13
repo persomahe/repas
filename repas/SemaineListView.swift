@@ -42,29 +42,9 @@ struct SemaineListView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-                Color(hex: "#FEF6E7")
-                    .ignoresSafeArea()
+            FondPageBackground()
 
-                GeometryReader { geometry in
-                    Ellipse()
-                        .fill(
-                            LinearGradient(
-                                colors: [.purple, .pink],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .frame(
-                            width: geometry.size.width * 1.4,
-                            height: 280
-                        )
-                        .offset(
-                            x: -geometry.size.width * 0.2,
-                            y: -36
-                        )
-                }
-                .ignoresSafeArea()
-                List {
+            List {
                 ForEach(semaines) { semaine in
                     Section {
                         VStack(alignment: .leading, spacing: 8) {
@@ -137,15 +117,15 @@ struct SemaineListView: View {
                                 }
                             }
                         }
-                        .foregroundStyle(Color(hex: "#AF52DE"))
+                        .foregroundStyle(Color(hex: "#C3360B"))
                         .fontWeight(.medium)
-                        
+
                     }
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color(hex: "#F5EAFB").ignoresSafeArea())
+        .listRowBackground(Color.clear)
         .navigationTitle("Mes semaines")
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -224,7 +204,7 @@ struct SemaineListView: View {
                         }
                     }
                 }
-                .tint(.purple)
+                .tint(Color(hex: "#B3462A"))
             }
         }
         .confirmationDialog(
@@ -250,7 +230,7 @@ struct SemaineListView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 42))
-                        .foregroundStyle(Color(hex: "#AF52DE"))
+                        .foregroundStyle(Color(hex: "#C3360B"))
                 }
             }
         }
@@ -337,7 +317,7 @@ struct NouvelleSemaineView: View {
                     ForEach(recettesSelectionnees) { recette in
                         HStack {
                             Text(recette.nom)
-                                .foregroundStyle(Color(hex: "#AF52DE"))
+                                .foregroundStyle(Color(hex: "#C3360B"))
                                 .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -371,7 +351,7 @@ struct NouvelleSemaineView: View {
                                 afficherSelectionRecette = true
                             } label: {
                                 Text(recetteChoisie?.nom ?? "À choisir…")
-                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color.purple)
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color(hex: "#B3462A"))
                             }
                         }
 
@@ -397,7 +377,7 @@ struct NouvelleSemaineView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#F5EAFB").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .font(.subheadline)
             .navigationTitle("Planifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)
@@ -426,7 +406,7 @@ struct NouvelleSemaineView: View {
                                             Spacer()
                                             if recetteChoisie?.persistentModelID == recette.persistentModelID {
                                                 Image(systemName: "checkmark")
-                                                    .foregroundStyle(.purple)
+                                                    .foregroundStyle(Color(hex: "#B3462A"))
                                             }
                                         }
                                     }
@@ -554,7 +534,7 @@ struct EditSemaineView: View {
                     ForEach(recettesChoisies.indices, id: \.self) { index in
                         HStack {
                             Text(recettesChoisies[index].recette.nom)
-                            .foregroundStyle(Color(hex: "#AF52DE"))
+                            .foregroundStyle(Color(hex: "#C3360B"))
                             .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -589,7 +569,7 @@ struct EditSemaineView: View {
                                 afficherSelectionRecette = true
                             } label: {
                                 Text(recetteChoisie?.nom ?? "À choisir…")
-                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color.purple)
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color(hex: "#B3462A"))
                             }
                         }
 
@@ -615,7 +595,7 @@ struct EditSemaineView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            .background(Color(hex: "#F5EAFB").ignoresSafeArea())
+            .background(Color(hex: "#F8E1C3").ignoresSafeArea())
             .font(.subheadline)
             .navigationTitle("Modifier ma semaine")
             .navigationBarTitleDisplayMode(.inline)
@@ -644,7 +624,7 @@ struct EditSemaineView: View {
                                             Spacer()
                                             if recetteChoisie?.persistentModelID == recette.persistentModelID {
                                                 Image(systemName: "checkmark")
-                                                    .foregroundStyle(.purple)
+                                                    .foregroundStyle(Color(hex: "#B3462A"))
                                             }
                                         }
                                     }
