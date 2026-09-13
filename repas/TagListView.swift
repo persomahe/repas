@@ -92,17 +92,6 @@ struct TagListView: View {
                 .frame(width: 12, height: 12)
             Text(tag.nom)
 
-            Spacer()
-
-            Button {
-                tagASupprimer = tag
-            } label: {
-                Image(systemName: "trash")
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(estTagUtilise(tag) ? Color.secondary : Color.red)
-            .disabled(estTagUtilise(tag))
-            .accessibilityLabel(Text("Supprimer le tag \(tag.nom)"))
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -111,6 +100,13 @@ struct TagListView: View {
         .accessibilityAction(named: Text("Modifier le tag")) {
             tagAEditer = tag
         }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                Button(role: .destructive) {
+                    tagASupprimer = tag
+                } label: {
+                    Label("Supprimer", systemImage: "trash")
+                }
+            }
     }
 
     private func estTagUtilise(_ tag: Tag) -> Bool {

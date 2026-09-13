@@ -36,6 +36,9 @@ struct ProduitListView: View {
     /// Texte saisi dans le filtre par nom.
     @State private var rechercheNom = ""
     @FocusState private var rechercheNomEstFocalisee: Bool
+    
+    //"Suppression impossible : le produit est utilisé par une ou plusieurs recettes."
+    @State private var afficherErreurSuppression = false
 
     /// Produits correspondant au nom recherché.
     private var produitsFiltres: [Produit] {
@@ -159,10 +162,19 @@ struct ProduitListView: View {
                 )
             }
         }
+        .alert(
+            "Suppression impossible",
+            isPresented: $afficherErreurSuppression
+        ) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Le produit est utilisé par une ou plusieurs recettes.")
+        }
     }
 
     @ViewBuilder
     private func produitRow(_ produit: Produit) -> some View {
+        
         VStack(spacing: 6) {
             Text(produit.nom)
                 .font(.subheadline)
@@ -179,18 +191,6 @@ struct ProduitListView: View {
                     }
                 }
             }
-
-            HStack(spacing: 14) {
-                Button {
-                    produitASupprimer = produit
-                } label: {
-                    Image(systemName: "trash")
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(estProduitUtilise(produit) ? Color.secondary : Color.red)
-                .disabled(estProduitUtilise(produit))
-                .accessibilityLabel(Text("Supprimer le produit \(produit.nom)"))
-            }
         }
         .frame(maxWidth: .infinity, minHeight: 60)
         .padding(8)
@@ -202,8 +202,21 @@ struct ProduitListView: View {
         .onTapGesture {
             produitAEditer = produit
         }
+        // Un produit utilisé dans une recette ne peut pas être supprimé.
+        .onLongPressGesture(minimumDuration: 0.6) {
+            if estProduitUtilise(produit) {
+                afficherErreurSuppression = true
+            } else {
+                produitASupprimer = produit
+            }
+        }
         .accessibilityAction(named: Text("Modifier le produit")) {
             produitAEditer = produit
+        }
+        .accessibilityAction(named: Text("Supprimer le produit")) {
+            guard !estProduitUtilise(produit) else { return }
+
+            produitASupprimer = produit
         }
     }
 

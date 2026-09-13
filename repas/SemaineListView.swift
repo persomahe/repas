@@ -67,14 +67,13 @@ struct SemaineListView: View {
                                 .accessibilityLabel("Modifier la semaine du \(dateEnFrancais(semaine.date))")
                                 .accessibilityHint("Ouvre la modification de cette semaine")
 
-                                Button {
-                                    semaineASupprimer = semaine
-                                } label: {
-                                    Image(systemName: "trash")
-                                }
-                                .buttonStyle(.plain)
-                                .foregroundStyle(Color.red)
-                                .accessibilityLabel("Supprimer la semaine du \(dateEnFrancais(semaine.date))")
+                            }
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                semaineASupprimer = semaine
+                            } label: {
+                                Label("Supprimer", systemImage: "trash")
                             }
                         }
 

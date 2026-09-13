@@ -330,18 +330,17 @@ struct RecetteListView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Button {
-                recetteASupprimer = recette
-            } label: {
-                Image(systemName: "trash")
-            }
-            .buttonStyle(.plain)
-            .foregroundStyle(Color.red)
-            .accessibilityLabel(Text("Supprimer la recette"))
         }
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(named: Text("Modifier la recette")) {
             recetteAEditer = recette
+        }
+        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+            Button(role: .destructive) {
+                recetteASupprimer = recette
+            } label: {
+                Label("Supprimer", systemImage: "trash")
+            }
         }
     }
 
