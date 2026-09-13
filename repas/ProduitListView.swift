@@ -22,7 +22,7 @@ struct ProduitListView: View {
     @Query(sort: \Tag.nom) private var tousLesTags: [Tag]
 
     /// Tag sélectionné pour le filtre.
-    @State private var tagSelectionne: Tag?
+    @State private var tagSelectionneID: PersistentIdentifier?
 
     /// Contrôle l'affichage de la fiche de création d'un produit
     @State private var ajoutEnCours = false
@@ -48,9 +48,9 @@ struct ProduitListView: View {
             let correspondAuNom = texte.isEmpty
                 || produit.nom.localizedCaseInsensitiveContains(texte)
 
-            let correspondAuTag = tagSelectionne.map { tag in
+            let correspondAuTag = tagSelectionneID.map { tagID in
                 produit.tags.contains {
-                    $0.persistentModelID == tag.persistentModelID
+                    $0.persistentModelID == tagID
                 }
             } ?? true
 
@@ -62,7 +62,7 @@ struct ProduitListView: View {
         ZStack {
             FondPageBackground()
 
-            List {
+            ScrollView(.vertical) {
                 LazyVGrid(
                     columns: [GridItem(.adaptive(minimum: 70), spacing: 12)],
                     spacing: 12
@@ -71,10 +71,10 @@ struct ProduitListView: View {
                         produitRow(produit)
                     }
                 }
+                .padding(.horizontal)
                 .padding(.vertical, 8)
             }
-            .scrollContentBackground(.hidden)
-            .listRowBackground(Color.clear)
+
         }
         .searchable(text: $rechercheNom, prompt: "Rechercher un produit")
         .searchFocused($rechercheNomEstFocalisee)
@@ -89,21 +89,22 @@ struct ProduitListView: View {
                 Menu {
                     Section("Tags") {
                         Button {
-                            tagSelectionne = nil
+                            tagSelectionneID = nil
+                            rechercheNom = ""
                         } label: {
                             Label(
                                 "Tous les tags",
-                                systemImage: tagSelectionne == nil ? "checkmark" : "tag"
+                                systemImage: tagSelectionneID == nil ? "checkmark" : "tag"
                             )
                         }
 
                         ForEach(tousLesTags) { tag in
                             Button {
-                                tagSelectionne = tag
+                                tagSelectionneID = tag.persistentModelID
                             } label: {
                                 Label(
                                     tag.nom,
-                                    systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID
+                                    systemImage: tagSelectionneID == tag.persistentModelID
                                         ? "checkmark"
                                         : "tag"
                                 )
@@ -113,7 +114,7 @@ struct ProduitListView: View {
                 } label: {
                     Label(
                         "Filtrer",
-                        systemImage: tagSelectionne == nil
+                        systemImage: tagSelectionneID == nil
                             ? "line.3.horizontal.decrease.circle"
                             : "line.3.horizontal.decrease.circle.fill"
                     )
@@ -149,6 +150,14 @@ struct ProduitListView: View {
         } message: {
             Text(suppressionMessage)
         }
+        .alert(
+            "Suppression impossible",
+            isPresented: $afficherErreurSuppression
+        ) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("Le produit est utilisé par une ou plusieurs recettes.")
+        }
         .overlay {
             if produitsFiltres.isEmpty {
                 ContentUnavailableView(
@@ -162,19 +171,11 @@ struct ProduitListView: View {
                 )
             }
         }
-        .alert(
-            "Suppression impossible",
-            isPresented: $afficherErreurSuppression
-        ) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text("Le produit est utilisé par une ou plusieurs recettes.")
-        }
+        
     }
 
     @ViewBuilder
     private func produitRow(_ produit: Produit) -> some View {
-        
         VStack(spacing: 6) {
             Text(produit.nom)
                 .font(.subheadline)
@@ -202,7 +203,6 @@ struct ProduitListView: View {
         .onTapGesture {
             produitAEditer = produit
         }
-        // Un produit utilisé dans une recette ne peut pas être supprimé.
         .onLongPressGesture(minimumDuration: 0.6) {
             if estProduitUtilise(produit) {
                 afficherErreurSuppression = true
@@ -214,9 +214,11 @@ struct ProduitListView: View {
             produitAEditer = produit
         }
         .accessibilityAction(named: Text("Supprimer le produit")) {
-            guard !estProduitUtilise(produit) else { return }
-
-            produitASupprimer = produit
+            if estProduitUtilise(produit) {
+                afficherErreurSuppression = true
+            } else {
+                produitASupprimer = produit
+            }
         }
     }
 
