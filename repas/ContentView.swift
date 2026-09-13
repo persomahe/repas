@@ -44,7 +44,7 @@ struct ContentView: View {
                     Image(systemName: "basket.fill")
                         .font(.system(size: 70))
                         .foregroundStyle(Color(hex: "#C3360B"))
-                        .padding(.vertical, 34)
+                        .padding(.vertical, 40)
 
                     NavigationLink("Voir les recettes") {
                         RecetteListView()
@@ -53,7 +53,7 @@ struct ContentView: View {
 
                     Text("Paramètres")
                         .font(.subheadline)
-                        .padding(.top, 24)
+                        .padding(.top, 44)
 
                     NavigationLink("Voir les tags") {
                         TagListView()
@@ -75,12 +75,6 @@ struct ContentView: View {
                 .safeAreaPadding(.bottom)
             }
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    Text("Gestion des repas")
-                        .font(.system(size: 36, weight: .bold))
-                        .foregroundStyle(Color(hex: "#C3360B"))
-                }
-
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         afficherInformations = true
