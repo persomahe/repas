@@ -201,7 +201,7 @@ struct CourseListView: View {
                         }
                     }
                 }
-                .tint(.green)
+                .tint(Color(hex: "#C3360B"))
             }
         }
     }
@@ -310,7 +310,7 @@ private struct SectionHeader: View {
     var body: some View {
         Label(title, systemImage: systemImage)
             .font(.headline)
-            .foregroundStyle(.green)
+            .foregroundStyle(Color(hex: "#C3360B"))
     }
 }
 
@@ -329,13 +329,13 @@ private struct IngredientCard: View {
             Text(quantite.formatted(.number.precision(.fractionLength(0...2))))
                 .font(.subheadline)
                 .fontWeight(.semibold)
-                .foregroundStyle(.white)
         }
+        .foregroundStyle(.white)
         .frame(maxWidth: .infinity, minHeight: 70)
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(hex: "#34C759"))
+                .fill(Color(hex: "#F17D58"))
         )
     }
 }

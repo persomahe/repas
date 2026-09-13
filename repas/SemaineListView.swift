@@ -117,7 +117,7 @@ struct SemaineListView: View {
                                 }
                             }
                         }
-                        .foregroundStyle(Color(hex: "#C3360B"))
+                        .foregroundStyle(.orange)
                         .fontWeight(.medium)
 
                     }
@@ -204,7 +204,7 @@ struct SemaineListView: View {
                         }
                     }
                 }
-                .tint(Color(hex: "#B3462A"))
+                .tint(.orange)
             }
         }
         .confirmationDialog(
@@ -230,7 +230,7 @@ struct SemaineListView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "calendar.badge.plus")
                         .font(.system(size: 42))
-                        .foregroundStyle(Color(hex: "#C3360B"))
+                        .foregroundStyle(.orange)
                 }
             }
         }
@@ -317,7 +317,7 @@ struct NouvelleSemaineView: View {
                     ForEach(recettesSelectionnees) { recette in
                         HStack {
                             Text(recette.nom)
-                                .foregroundStyle(Color(hex: "#C3360B"))
+                                .foregroundStyle(.orange)
                                 .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -351,7 +351,7 @@ struct NouvelleSemaineView: View {
                                 afficherSelectionRecette = true
                             } label: {
                                 Text(recetteChoisie?.nom ?? "À choisir…")
-                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color(hex: "#B3462A"))
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : .orange)
                             }
                         }
 
@@ -406,7 +406,7 @@ struct NouvelleSemaineView: View {
                                             Spacer()
                                             if recetteChoisie?.persistentModelID == recette.persistentModelID {
                                                 Image(systemName: "checkmark")
-                                                    .foregroundStyle(Color(hex: "#B3462A"))
+                                                    .foregroundStyle(.orange)
                                             }
                                         }
                                     }
@@ -534,7 +534,7 @@ struct EditSemaineView: View {
                     ForEach(recettesChoisies.indices, id: \.self) { index in
                         HStack {
                             Text(recettesChoisies[index].recette.nom)
-                            .foregroundStyle(Color(hex: "#C3360B"))
+                                .foregroundStyle(.orange)
                             .fontWeight(.medium)
                             Spacer()
                             Stepper(
@@ -569,7 +569,7 @@ struct EditSemaineView: View {
                                 afficherSelectionRecette = true
                             } label: {
                                 Text(recetteChoisie?.nom ?? "À choisir…")
-                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : Color(hex: "#B3462A"))
+                                    .foregroundStyle(recetteChoisie == nil ? Color.secondary : .orange)
                             }
                         }
 
@@ -624,7 +624,7 @@ struct EditSemaineView: View {
                                             Spacer()
                                             if recetteChoisie?.persistentModelID == recette.persistentModelID {
                                                 Image(systemName: "checkmark")
-                                                    .foregroundStyle(Color(hex: "#B3462A"))
+                                                    .foregroundStyle(.orange)
                                             }
                                         }
                                     }
