@@ -47,8 +47,8 @@
       "couleurHex": "#FF2D55"
     },
     {
-      "id": "boissons",
-      "nom": "Boissons",
+      "id": "liquides",
+      "nom": "Liquides",
       "couleurHex": "#8E8E93"
     },
     {
@@ -123,6 +123,14 @@
         ]
       },
       {
+        "id": "tortilla",
+        "nom": "Tortilla",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "feculents"
+        ]
+      },
+      {
       "id": "gel-douche",
       "nom": "Gel douche",
       "typeUnite": "à la pièce",
@@ -179,6 +187,14 @@
       ]
     },
     {
+        "id": "pates-lasagne",
+        "nom": "Pâtes Lasagne",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "feculents"
+        ]
+    },
+    {
       "id": "bouche",
       "nom": "Bain de bouche",
       "typeUnite": "à la pièce",
@@ -200,6 +216,14 @@
       "typeUnite": "à la pièce",
       "tags": [
         "hygiene"
+      ]
+    },
+    {
+      "id": "pommes-terre-grenaille",
+      "nom": "Pommes Grenaille",
+      "typeUnite": "au poids",
+      "tags": [
+        "feculents"
       ]
     },
     {
@@ -452,6 +476,14 @@
       ]
     },
     {
+      "id": "fenouil",
+      "nom": "Fenouil",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "legumes"
+      ]
+    },
+    {
       "id": "mais",
       "nom": "Maïs",
       "typeUnite": "à la pièce",
@@ -558,7 +590,7 @@
       "nom": "Vin blanc",
       "typeUnite": "au poids",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -566,7 +598,7 @@
       "nom": "Vin rouge",
       "typeUnite": "au poids",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -602,7 +634,7 @@
       "nom": "Lait de coco",
       "typeUnite": "au poids",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -610,7 +642,7 @@
       "nom": "Lait",
       "typeUnite": "au poids",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -693,6 +725,14 @@
       "typeUnite": "au poids",
       "tags": [
         "laitiers"
+      ]
+    },
+    {
+      "id": "fraise",
+      "nom": "Fraise",
+      "typeUnite": "au poids",
+      "tags": [
+        "fruits"
       ]
     },
     {
@@ -876,7 +916,7 @@
       "nom": "Huile de coco",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -998,7 +1038,15 @@
       "nom": "Gingembre frais",
       "typeUnite": "au poids",
       "tags": [
-        "Legumes"
+        "legumes"
+      ]
+    },
+    {
+      "id": "huile-truffe",
+      "nom": "Huile de truffe",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
       ]
     },
     {
@@ -1010,7 +1058,7 @@
       ]
     },
     {
-      "id": "steak-hache-a-5",
+      "id": "steakhache-5",
       "nom": "Steak haché à 5%",
       "typeUnite": "au poids",
       "tags": [
@@ -1026,7 +1074,7 @@
       ]
     },
     {
-      "id": "vianhachee-5",
+      "id": "viandehachee-5",
       "nom": "Viande hachée 5%",
       "typeUnite": "au poids",
       "tags": [
@@ -1096,7 +1144,7 @@
       ]
     },
     {
-      "id": "petits-pois-ecosses",
+      "id": "petits-pois",
       "nom": "Petits pois",
       "typeUnite": "au poids",
       "tags": [
@@ -1156,7 +1204,7 @@
       "tags": []
     },
     {
-      "id": "raisins-secs-corinthe",
+      "id": "raisins-secs",
       "nom": "Raisins secs",
       "typeUnite": "au poids",
       "tags": [
@@ -1196,11 +1244,11 @@
       ]
     },
     {
-      "id": "rhum-martiniquais",
+      "id": "rhum",
       "nom": "Rhum",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1208,7 +1256,7 @@
       "nom": "Jus d'orange",
       "typeUnite": "au poids",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1216,7 +1264,7 @@
       "nom": "Jus passion",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1232,7 +1280,7 @@
       "nom": "Jus goyave",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1240,7 +1288,7 @@
       "nom": "Sucre roux liquide",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1248,7 +1296,7 @@
       "nom": "Jus fruits mélangés",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1256,7 +1304,7 @@
       "nom": "Limonade",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
       ]
     },
     {
@@ -1264,14 +1312,14 @@
       "nom": "Beurre",
       "typeUnite": "à la pièce",
       "tags": [
-        "produits laitiers"
+        "laitiers"
       ]
     },
     {
       "id": "farine",
       "nom": "Farine",
       "typeUnite": "au poids",
-      "tags": []
+      "tags": ["feculents"]
     },
     {
       "id": "epinards-frais",
@@ -1311,6 +1359,22 @@
       "typeUnite": "à la pièce",
       "tags": [
         "laitiers"
+      ]
+    },
+    {
+      "id": "brebis-truffe",
+      "nom": "Brebis truffé",
+      "typeUnite": "au poids",
+      "tags": [
+        "laitiers"
+      ]
+    },
+    {
+      "id": "salade-verte",
+      "nom": "Salade verte",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "legumes"
       ]
     },
     {
@@ -1412,7 +1476,7 @@
       "typeUnite": "à la pièce",
       "tags": [
         "desserts",
-        "récurrents"
+        "recurrents"
       ]
     },
     {
@@ -1537,7 +1601,15 @@
       "nom": "Sirop Sodastream",
       "typeUnite": "à la pièce",
       "tags": [
-        "boissons"
+        "liquides"
+      ]
+    },
+    {
+      "id": "sirop-sucre-canne",
+      "nom": "Sirop sucre de canne",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
       ]
     }
   ],
@@ -1548,7 +1620,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "viande",
+        "viandes",
         "legumes"
       ],
       "lien": null,
@@ -1688,7 +1760,7 @@
           "quantite": 2
         },
         {
-          "produit": "pomme-de-terre",
+          "produit": "pomme-terre",
           "quantite": 800
         }
       ]
@@ -1755,7 +1827,7 @@
           "quantite": 200
         },
         {
-          "produit": "crevette",
+          "produit": "crevettes",
           "quantite": 200
         },
         {
@@ -1876,7 +1948,7 @@
             "quantite": 200
           },
           {
-            "produit": "salade",
+            "produit": "salade-verte",
             "quantite": 1
           }
         ]
@@ -1940,7 +2012,7 @@
           "quantite": 150.0
         },
         {
-          "produit": "salade",
+          "produit": "salade-verte",
           "quantite": 1
         }
       ]
@@ -2150,7 +2222,7 @@
       "nom": "Verrines Crevettes",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes"],
       "lien": null,
       "tempsPreparationMinutes": 15,
       "ingredients": [
@@ -2177,7 +2249,7 @@
       "nom": "Roti Orlof",
       "nombreDeParts": 4,
       "saisons": [],
-      "tags": [],
+      "tags": ["viandes"],
       "lien": null,
       "tempsPreparationMinutes": 15,
       "ingredients": [
@@ -2191,6 +2263,103 @@
         },
         {
           "produit": "fromage-tranche",
+          "quantite": 1
+        }
+      ]
+    },
+    {
+      "id": "salade-brebis",
+      "nom": "Salade au Brebis truffé",
+      "nombreDeParts": 2,
+      "saisons": [],
+      "tags": ["legumes", "laitiers"],
+      "lien": null,
+      "tempsPreparationMinutes": 15,
+      "ingredients": [
+        {
+          "produit": "brebis-truffe",
+          "quantite": 100.0
+        },
+        {
+          "produit": "lardons-fumes",
+          "quantite": 1
+        },
+        {
+          "produit": "salade-verte",
+          "quantite": 1
+        },
+        {
+          "produit": "huile-truffe",
+          "quantite": 1
+        },
+        {
+          "produit": "mozzarella",
+          "quantite": 1
+        }
+      ]
+    },
+    {
+      "id": "lasagne-bolognese",
+      "nom": "Lasagnes à la bolognèse",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": ["feculents", "viandes"],
+      "lien": "https://www.cookomix.com/recettes/lasagnes-bolognaise-thermomix/",
+      "tempsPreparationMinutes": 15,
+      "ingredients": [
+        {
+          "produit": "pates-lasagne",
+          "quantite": 1
+        },
+        {
+          "produit": "tomates-pelees-en-conserve",
+          "quantite": 400.00
+        },
+        {
+          "produit": "viandehachee-5",
+          "quantite": 400.00
+        },
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "fromage-rape",
+          "quantite": 100.00
+        }
+      ]
+    },
+    {
+      "id": "tortills-boeuf",
+      "nom": "Tortillas au boeuf",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": ["feculents", "viandes"],
+      "lien": null,
+      "tempsPreparationMinutes": 15,
+      "ingredients": [
+        {
+          "produit": "tortilla",
+          "quantite": 4
+        },
+        {
+          "produit": "tomates-pelees-en-conserve",
+          "quantite": 100.00
+        },
+        {
+          "produit": "viandehachee-5",
+          "quantite": 400.00
+        },
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "fromage-rape",
+          "quantite": 100.00
+        },
+        {
+          "produit": "mais",
           "quantite": 1
         }
       ]
@@ -2312,7 +2481,7 @@
       "tempsPreparationMinutes": 30,
       "ingredients": [
         {
-          "produit": "vianhachee-5",
+          "produit": "viandehachee-5",
           "quantite": 400.0
         },
         {
@@ -2441,7 +2610,7 @@
           "quantite": 1
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 2
         }
       ]
@@ -2550,7 +2719,7 @@
           "quantite": 300.0
         },
         {
-          "produit": "salade",
+          "produit": "salade-verte",
           "quantite": 1
         },
         {
@@ -2653,7 +2822,7 @@
       "tempsPreparationMinutes": 60,
       "ingredients": [
         {
-          "produit": "poissons-blanc",
+          "produit": "poisson-blanc",
           "quantite": 300.0
         },
         {
@@ -2672,7 +2841,7 @@
       "nombreDeParts": 8,
       "saisons": [],
       "tags": [
-        "boissons"
+        "liquides"
       ],
       "lien": null,
       "tempsPreparationMinutes": 0,
@@ -2705,7 +2874,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "boissons"
+        "liquides"
       ],
       "lien": null,
       "tempsPreparationMinutes": 0,
@@ -2719,7 +2888,7 @@
           "quantite": 1
         },
         {
-          "produit": "alcool",
+          "produit": "rhum",
           "quantite": 1
         },
         {
@@ -2768,7 +2937,7 @@
       "nombreDeParts": 4,
       "saisons": [],
       "tags": [
-        "viande",
+        "viandes",
         "feculents"
       ],
       "lien": null,
@@ -2883,7 +3052,7 @@
           "quantite": 200.0
         },
         {
-          "produit": "pates-de-riz",
+          "produit": "pate-de-riz",
           "quantite": 300.0
         },
         {
@@ -2895,7 +3064,7 @@
           "quantite": 1
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 1
         }
       ]
@@ -2924,7 +3093,7 @@
           "quantite": 1
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 1
         },
         {
@@ -2945,7 +3114,7 @@
       "tempsPreparationMinutes": 30,
       "ingredients": [
         {
-          "produit": "farine-cereales",
+          "produit": "farine",
           "quantite": 250.0
         },
         {
@@ -3015,7 +3184,7 @@
           "quantite": 80.0
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 3
         }
       ]
@@ -3037,7 +3206,7 @@
           "unite": "l"
         },
         {
-          "produit": "semoule",
+          "produit": "semoule-couscous",
           "quantite": 140.0
         },
         {
@@ -3045,11 +3214,11 @@
           "quantite": 100.0
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 3
         },
         {
-          "produit": "raisin-sec",
+          "produit": "raisins-secs",
           "quantite": 100
         }
       ]
@@ -3079,11 +3248,11 @@
           "quantite": 250.0
         },
         {
-          "produit": "beurre-sale",
+          "produit": "beurre-12-sel",
           "quantite": 50.0
         },
         {
-          "produit": "oeuf",
+          "produit": "oeufs",
           "quantite": 4
         }
       ]
@@ -3100,7 +3269,7 @@
       "tempsPreparationMinutes": 30,
       "ingredients": [
         {
-          "produit": "beurre-sale",
+          "produit": "beurre-12-sel",
           "quantite": 125.0
         },
         {
@@ -3216,7 +3385,7 @@
           "quantite": 1
         },
         {
-          "produit": "epinard",
+          "produit": "epinard-frais",
           "quantite": 500.0
         },
         {
@@ -3376,11 +3545,11 @@
           "quantite": 25.0
         },
         {
-          "produit": "tomate-cerise",
+          "produit": "tomates-cerises",
           "quantite": 1
         },
         {
-          "produit": "semoule",
+          "produit": "semoule-couscous",
           "quantite": 80.0
         },
         {
@@ -3491,7 +3660,7 @@
       "tempsPreparationMinutes": 15,
       "ingredients": [
         {
-          "produit": "filet-porc",
+          "produit": "filet-mignon",
           "quantite": 500.0
         },
         {
