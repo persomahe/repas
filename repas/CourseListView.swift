@@ -72,93 +72,95 @@ struct CourseListView: View {
         ZStack(alignment: .top) {
             FondPageBackground()
 
-            ScrollView(.vertical) {
-                VStack(spacing: 12) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
+            GeometryReader { geometry in
+                ScrollView(.vertical) {
+                    VStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            SectionHeader(title: "Déjà ajoutés", systemImage: "checkmark.circle")
 
-                        if dejaAjoutes.isEmpty {
-                            Text("Aucun ingrédient déjà ajouté.")
-                                .foregroundStyle(.secondary)
-                        } else {
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                                ForEach(dejaAjoutes) { ingredient in
-                                    Button {
-                                        retirerDuPanier(ingredient.produit)
-                                    } label: {
-                                        IngredientCard(nom: ingredient.produit.nom, quantite: ingredient.quantite)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .transition(.slide)
-                                    .scaleEffect(carteAnimee == ingredient.id ? 1.2 : 1.0)
-                                    .animation(.spring(response: 0.4, dampingFraction: 0.65), value: carteAnimee)
-                                }
-                            }
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
-
-                    VStack(spacing: 0) {
-                        HStack {
-                            SectionHeader(title: "À prendre", systemImage: "plus.circle")
-                            Spacer()
-                            Menu {
-                                Button {
-                                    tagSelectionne = nil
-                                } label: {
-                                    Label("Tous les produits", systemImage: tagSelectionne == nil ? "checkmark" : "line.3.horizontal.decrease.circle")
-                                }
-                                ForEach(tousLesTags) { tag in
-                                    Button {
-                                        tagSelectionne = tag
-                                    } label: {
-                                        Label(tag.nom, systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID ? "checkmark" : "tag")
-                                    }
-                                }
-                            } label: {
-                                Label(
-                                    tagSelectionne?.nom ?? "Tous",
-                                    systemImage: tagSelectionne == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill"
-                                )
-                                .font(.caption)
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-
-                        Divider()
-
-                        ScrollView(.vertical) {
-                            if produitsFiltres.isEmpty {
-                                Text(messageProduitsVides)
+                            if dejaAjoutes.isEmpty {
+                                Text("Aucun ingrédient déjà ajouté.")
                                     .foregroundStyle(.secondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding()
                             } else {
                                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
-                                    ForEach(produitsFiltres) { produit in
+                                    ForEach(dejaAjoutes) { ingredient in
                                         Button {
-                                            ajouterAprendre(produit)
+                                            retirerDuPanier(ingredient.produit)
                                         } label: {
-                                            IngredientCard(nom: produit.nom, quantite: produit.typeUnite.pas)
+                                            IngredientCard(nom: ingredient.produit.nom, quantite: ingredient.quantite)
                                         }
                                         .buttonStyle(.plain)
+                                        .transition(.slide)
+                                        .scaleEffect(carteAnimee == ingredient.id ? 1.2 : 1.0)
+                                        .animation(.spring(response: 0.4, dampingFraction: 0.65), value: carteAnimee)
                                     }
                                 }
-                                .padding(.horizontal)
-                                .padding(.bottom)
                             }
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+
+                        VStack(spacing: 0) {
+                            HStack {
+                                SectionHeader(title: "À prendre", systemImage: "plus.circle")
+                                Spacer()
+                                Menu {
+                                    Button {
+                                        tagSelectionne = nil
+                                    } label: {
+                                        Label("Tous les produits", systemImage: tagSelectionne == nil ? "checkmark" : "line.3.horizontal.decrease.circle")
+                                    }
+                                    ForEach(tousLesTags) { tag in
+                                        Button {
+                                            tagSelectionne = tag
+                                        } label: {
+                                            Label(tag.nom, systemImage: tagSelectionne?.persistentModelID == tag.persistentModelID ? "checkmark" : "tag")
+                                        }
+                                    }
+                                } label: {
+                                    Label(
+                                        tagSelectionne?.nom ?? "Tous",
+                                        systemImage: tagSelectionne == nil ? "line.3.horizontal.decrease.circle" : "line.3.horizontal.decrease.circle.fill"
+                                    )
+                                    .font(.caption)
+                                }
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 10)
+
+                            Divider()
+
+                            ScrollView(.vertical) {
+                                if produitsFiltres.isEmpty {
+                                    Text(messageProduitsVides)
+                                        .foregroundStyle(.secondary)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding()
+                                } else {
+                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 70), spacing: 12)], spacing: 12) {
+                                        ForEach(produitsFiltres) { produit in
+                                            Button {
+                                                ajouterAprendre(produit)
+                                            } label: {
+                                                IngredientCard(nom: produit.nom, quantite: produit.typeUnite.pas)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                    .padding(.bottom)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .frame(height: max(400, geometry.size.height - 300))
+                        .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 400)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .padding(.bottom)
                 }
-                .padding(.horizontal)
-                .padding(.top, 8)
-                .padding(.bottom)
             }
         }
         .searchable(text: $rechercheProduit, placement: .navigationBarDrawer(displayMode: .always), prompt: "Rechercher un produit")
