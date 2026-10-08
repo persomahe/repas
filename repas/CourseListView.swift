@@ -25,14 +25,32 @@ struct CourseListView: View {
 
     /// Tag sélectionné pour la section « À prendre ».
     @State private var tagSelectionne: Tag?
+    @State private var rechercheProduit = ""
     @State private var carteAnimee: PersistentIdentifier?
 
     private var produitsFiltres: [Produit] {
-        guard let tagSelectionne else { return produits }
+        let recherche = rechercheProduit
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(
+                options: [.diacriticInsensitive, .caseInsensitive],
+                locale: .current
+            )
+
         return produits.filter { produit in
-            produit.tags.contains { tag in
-                tag.persistentModelID == tagSelectionne.persistentModelID
-            }
+            let correspondAuTag = tagSelectionne == nil ||
+                produit.tags.contains { tag in
+                    tag.persistentModelID == tagSelectionne?.persistentModelID
+                }
+
+            let nomProduit = produit.nom.folding(
+                options: [.diacriticInsensitive, .caseInsensitive],
+                locale: .current
+            )
+
+            let correspondALaRecherche = recherche.isEmpty ||
+                nomProduit.contains(recherche)
+
+            return correspondAuTag && correspondALaRecherche
         }
     }
 
@@ -151,8 +169,14 @@ struct CourseListView: View {
                     }
                 }
             }
+            .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .listRowBackground(Color.clear)
+            .searchable(
+                text: $rechercheProduit,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Rechercher un produit"
+            )
         }
         .navigationTitle("Liste de courses")
         .toolbar {

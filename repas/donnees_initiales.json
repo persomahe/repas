@@ -1645,6 +1645,22 @@
       ]
     },
     {
+      "id": "thon",
+      "nom": "Thon",
+      "typeUnite": "au poids",
+      "tags": [
+        "viandes"
+      ]
+    },
+    {
+      "id": "thon-boite",
+      "nom": "Thon en boite",
+      "typeUnite": "au poids",
+      "tags": [
+        "viandes"
+      ]
+    },
+    {
       "id": "piment-vert",
       "nom": "Piment vert",
       "typeUnite": "au poids",
