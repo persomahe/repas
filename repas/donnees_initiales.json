@@ -7,6 +7,11 @@
       "couleurHex": "#AF52DE"
     },
     {
+      "id": "animaux",
+      "nom": "Animaux",
+      "couleurHex": "#FCC6BB"
+    },
+    {
       "id": "viandes",
       "nom": "Viandes & poissons",
       "couleurHex": "#34C759"
@@ -64,6 +69,30 @@
         "typeUnite": "à la pièce",
         "tags": [
           "chinois"
+        ]
+      },
+      {
+        "id": "miel",
+        "nom": "Miel",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "recurrents"
+        ]
+      },
+      {
+        "id": "gelee-coing",
+        "nom": "Gelée de coing",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "desserts"
+        ]
+      },
+      {
+        "id": "gelee-myrtille",
+        "nom": "Gelée de myrtille",
+        "typeUnite": "à la pièce",
+        "tags": [
+          "desserts"
         ]
       },
       {
@@ -572,6 +601,14 @@
       ]
     },
     {
+      "id": "citron-bouteille",
+      "nom": "Citron bouteille",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
       "id": "huile-d-olive",
       "nom": "Huile d'olive",
       "typeUnite": "à la pièce",
@@ -672,6 +709,22 @@
       ]
     },
     {
+      "id": "escalope-poulet",
+      "nom": "Escalope de poulet",
+      "typeUnite": "au poids",
+      "tags": [
+        "viandes"
+      ]
+    },
+    {
+      "id": "escalope-dinde",
+      "nom": "Escalope de dinde",
+      "typeUnite": "au poids",
+      "tags": [
+        "viandes"
+      ]
+    },
+    {
       "id": "poireau",
       "nom": "Poireau",
       "typeUnite": "à la pièce",
@@ -698,6 +751,14 @@
     {
       "id": "thym",
       "nom": "Thym",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "legumes"
+      ]
+    },
+    {
+      "id": "laurier",
+      "nom": "Laurier",
       "typeUnite": "à la pièce",
       "tags": [
         "legumes"
@@ -734,6 +795,30 @@
       "tags": [
         "fruits"
       ]
+    },
+    {
+      "id": "croquette-chat",
+      "nom": "Croquettes Chat",
+      "typeUnite": "à la pièce",
+      "tags": ["animaux"]
+    },
+    {
+      "id": "croquette-chien",
+      "nom": "Croquettes Chien",
+      "typeUnite": "à la pièce",
+      "tags": ["animaux"]
+    },
+    {
+      "id": "canard-chien",
+      "nom": "Canard Chien",
+      "typeUnite": "à la pièce",
+      "tags": ["animaux"]
+    },
+    {
+      "id": "os-chien",
+      "nom": "Os Chien",
+      "typeUnite": "à la pièce",
+      "tags": ["animaux"]
     },
     {
       "id": "pruneau",
@@ -920,6 +1005,38 @@
       ]
     },
     {
+      "id": "infusion-thym",
+      "nom": "Infusion Thym",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
+      "id": "infusion-chai",
+      "nom": "Infusion Chai",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
+      "id": "infusion-Noisette-riz",
+      "nom": "Infusion Noisette Riz",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
+      "id": "infusion-gingembre",
+      "nom": "Infusion Gingembre Miel Canelle",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
       "id": "basilic",
       "nom": "Basilic",
       "typeUnite": "à la pièce",
@@ -986,6 +1103,14 @@
     {
       "id": "riz",
       "nom": "Riz basmati",
+      "typeUnite": "au poids",
+      "tags": [
+        "feculents"
+      ]
+    },
+    {
+      "id": "pates",
+      "nom": "Pâtes",
       "typeUnite": "au poids",
       "tags": [
         "feculents"
@@ -1276,8 +1401,16 @@
       ]
     },
     {
-      "id": "goyave",
+      "id": "jus-goyave",
       "nom": "Jus goyave",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "liquides"
+      ]
+    },
+    {
+      "id": "jus-pomme",
+      "nom": "Jus de pomme",
       "typeUnite": "à la pièce",
       "tags": [
         "liquides"
@@ -1463,6 +1596,22 @@
       ]
     },
     {
+      "id": "comte",
+      "nom": "Comté",
+      "typeUnite": "au poids",
+      "tags": [
+        "laitiers"
+      ]
+    },
+    {
+      "id": "cantal",
+      "nom": "Cantal",
+      "typeUnite": "au poids",
+      "tags": [
+        "laitiers"
+      ]
+    },
+    {
       "id": "poire",
       "nom": "Poire",
       "typeUnite": "à la pièce",
@@ -1555,6 +1704,14 @@
     {
       "id": "biscuit-cuillere",
       "nom": "Biscuit à la cuillère",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "desserts"
+      ]
+    },
+    {
+      "id": "biscuits",
+      "nom": "Biscuits",
       "typeUnite": "à la pièce",
       "tags": [
         "desserts"
@@ -1799,7 +1956,7 @@
         "viandes",
         "legumes"
       ],
-      "lien": "https://www.cookomix.com/recherche/Blanquette+de+la+mer/",
+      "lien": "https://www.cookomix.com/recettes/blanquette-de-la-mer-thermomix/",
       "tempsPreparationMinutes": 0,
       "ingredients": [
         {
@@ -1836,6 +1993,44 @@
         },
         {
           "produit": "ciboulette",
+          "quantite": 1
+        }
+      ]
+    },
+    {
+      "id": "blanquette-porc",
+      "nom": "Blanquette de porc",
+      "nombreDeParts": 6,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "https://www.cookomix.com/recettes/blanquette-de-veau-thermomix/",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "vin-blanc",
+          "quantite": 350
+        },
+        {
+          "produit": "roti-porc",
+          "quantite": 600
+        },
+        {
+          "produit": "carotte",
+          "quantite": 500
+        },
+        {
+          "produit": "champignon-blanc",
+          "quantite": 500
+        },
+        {
+          "produit": "laurier",
           "quantite": 1
         }
       ]
@@ -2562,6 +2757,47 @@
       ]
     },
     {
+      "id": "petit-dejeuner",
+      "nom": "Petit-déjeuner",
+      "nombreDeParts": 1,
+      "saisons": [],
+      "tags": [
+        "recurrents"
+      ],
+      "lien": null,
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "miel",
+          "quantite": 1.0,
+        },
+        {
+          "produit": "jambon",
+          "quantite": 2.0
+        },
+        {
+          "produit": "bacon",
+          "quantite": 2.0
+        },
+        {
+          "produit": "mozzarella",
+          "quantite": 4.0
+        },
+        {
+          "produit": "tomates-cerises",
+          "quantite": 2.0
+        },
+        {
+          "produit": "avocat",
+          "quantite": 3.0
+        },
+        {
+          "produit": "oeufs",
+          "quantite": 12.0
+        }
+      ]
+    },
+    {
       "id": "puree-potiron",
       "nom": "Purée de Potiron",
       "nombreDeParts": 4,
@@ -2859,7 +3095,7 @@
           "quantite": 1
         },
         {
-          "produit": "goyave",
+          "produit": "jus-goyave",
           "quantite": 1
         },
         {
