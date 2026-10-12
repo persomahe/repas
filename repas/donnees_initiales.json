@@ -623,6 +623,14 @@
       ]
     },
     {
+      "id": "faisselle",
+      "nom": "Faisselle",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "laitiers"
+      ]
+    },
+    {
       "id": "vin-blanc",
       "nom": "Vin blanc",
       "typeUnite": "au poids",
@@ -2921,7 +2929,7 @@
         },
         {
           "produit": "potiron",
-          "quantite": 125.0
+          "quantite": 500.0
         }
       ]
     },
