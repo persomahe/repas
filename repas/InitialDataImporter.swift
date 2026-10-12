@@ -100,7 +100,7 @@ enum InitialDataImporter {
 
         var tagsParID: [String: Tag] = [:]
         for dto in catalogue.tags {
-            let tag = Tag(nom: dto.nom, couleurHex: dto.couleurHex)
+            let tag = Tag(id: dto.id, nom: dto.nom, couleurHex: dto.couleurHex)
             context.insert(tag)
             tagsParID[dto.id] = tag
         }
@@ -109,6 +109,7 @@ enum InitialDataImporter {
         for dto in catalogue.produits {
             let tags = dto.tags.compactMap { tagsParID[$0] }
             let produit = Produit(
+                id: dto.id,
                 nom: dto.nom,
                 typeUnite: dto.typeUnite,
                 tags: tags
@@ -120,6 +121,7 @@ enum InitialDataImporter {
         for dto in catalogue.recettes {
             let tags = dto.tags.compactMap { tagsParID[$0] }
             let recette = Recette(
+                id: dto.id,
                 nom: dto.nom,
                 nombreDeParts: dto.nombreDeParts,
                 saisons: dto.saisons,

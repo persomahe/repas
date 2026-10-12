@@ -11,6 +11,9 @@ import SwiftData
 /// Table des tags : permet d'étiqueter les éléments de l'app (ex. « végétarien », « rapide », « été »).
 @Model
 final class Tag {
+    /// Identifiant métier stable du tag, unique dans la base
+    @Attribute(.unique) var id: String
+
     /// Nom du tag, unique dans la base
     @Attribute(.unique) var nom: String
 
@@ -26,7 +29,8 @@ final class Tag {
     /// Recettes associées à ce tag (relation inverse de Recette.tags)
     var recettes: [Recette] = []
 
-    init(nom: String, couleurHex: String = "#007AFF", dateCreation: Date = .now) {
+    init(id: String = UUID().uuidString, nom: String, couleurHex: String = "#007AFF", dateCreation: Date = .now) {
+        self.id = id
         self.nom = nom
         self.couleurHex = couleurHex
         self.dateCreation = dateCreation

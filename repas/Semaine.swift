@@ -11,6 +11,9 @@ import SwiftData
 /// Table des semaines : une semaine de repas, identifiée par la date
 @Model
 final class Semaine {
+    /// Identifiant métier stable de la semaine, unique dans la base
+    @Attribute(.unique) var id: String
+
     /// Date de la semaine, unique dans la base
     @Attribute(.unique) var date: Date
 
@@ -19,7 +22,8 @@ final class Semaine {
     @Relationship(deleteRule: .cascade, inverse: \RecetteSemaine.semaine)
     var recettes: [RecetteSemaine]
 
-    init(date: Date, recettes: [RecetteSemaine] = []) {
+    init(id: String = UUID().uuidString, date: Date, recettes: [RecetteSemaine] = []) {
+        self.id = id
         self.date = date
         self.recettes = recettes
     }

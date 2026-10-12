@@ -14,10 +14,40 @@ struct ContentView: View {
     /// Toutes les semaines, triées de la plus récente à la plus ancienne
     @Query(sort: \Semaine.date, order: .reverse) private var semaines: [Semaine]
     @State private var afficherInformations = false
+    @State private var fichierAPartager: URL?
+    @State private var messageExport: String?
 
     /// La dernière semaine (la plus récente), si elle existe
     private var derniereSemaine: Semaine? {
         semaines.first
+    }
+
+    private var exportEstDisponible: Bool {
+        guard let semaine = derniereSemaine else { return false }
+        return semaineCourse(semaine) != nil
+    }
+
+    private var messageExportIndisponible: String {
+        guard let semaine = derniereSemaine else {
+            return "Planifiez une semaine pour pouvoir l’exporter."
+        }
+        return semaineCourse(semaine) == nil
+            ? "Ouvrez d’abord la liste de courses de la dernière semaine pour la créer, puis revenez ici pour l’exporter."
+            : ""
+    }
+
+    private func semaineCourse(_ semaine: Semaine) -> Course? {
+        (try? modelContext.fetch(FetchDescriptor<Course>()))?.first {
+            $0.semaine?.persistentModelID == semaine.persistentModelID
+        }
+    }
+
+    private func exporterDerniereSemaine() {
+        do {
+            fichierAPartager = try SemaineExportService.creerFichier(dans: modelContext)
+        } catch {
+            messageExport = error.localizedDescription
+        }
     }
 
     var body: some View {
@@ -50,10 +80,25 @@ struct ContentView: View {
                         RecetteListView()
                     }
                     .buttonStyle(CarteButtonStyle(couleur: .orange))
+                    .padding(.bottom, 44)
 
-                    Text("Paramètres")
-                        .font(.subheadline)
-                        .padding(.top, 44)
+
+                    Button {
+                        exporterDerniereSemaine()
+                    } label: {
+                        Label("Partager mes courses", systemImage: "square.and.arrow.up")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color(red: 0.922, green: 0.651, blue: 0.294))             .disabled(!exportEstDisponible)
+                    .opacity(exportEstDisponible ? 1 : 0.55)
+
+                    if !exportEstDisponible {
+                        Text(messageExportIndisponible)
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
 
                     NavigationLink("Voir les tags") {
                         TagListView()
@@ -119,6 +164,23 @@ struct ContentView: View {
                     }
                     .tint(.orange)
                 }
+            }
+            .sheet(isPresented: Binding(
+                get: { fichierAPartager != nil },
+                set: { if !$0 { fichierAPartager = nil } }
+            )) {
+                if let url = fichierAPartager {
+                    ActivityView(activityItems: [url])
+                        .presentationDetents([.medium])
+                }
+            }
+            .alert("Export impossible", isPresented: Binding(
+                get: { messageExport != nil },
+                set: { if !$0 { messageExport = nil } }
+            )) {
+                Button("OK", role: .cancel) { messageExport = nil }
+            } message: {
+                Text(messageExport ?? "Une erreur est survenue.")
             }
         }
         

@@ -21,6 +21,9 @@ enum Saison: String, Codable, CaseIterable, Identifiable {
 /// Table des recettes.
 @Model
 final class Recette {
+    /// Identifiant métier stable de la recette, unique dans la base
+    @Attribute(.unique) var id: String
+
     /// Nom de la recette, unique dans la base
     @Attribute(.unique) var nom: String
 
@@ -50,6 +53,7 @@ final class Recette {
     var semaines: [RecetteSemaine]
 
     init(
+        id: String = UUID().uuidString,
         nom: String,
         nombreDeParts: Int = 4,
         saisons: [Saison] = [],
@@ -59,6 +63,7 @@ final class Recette {
         ingredients: [IngredientRecette] = [],
         semaines: [RecetteSemaine] = []
     ) {
+        self.id = id
         self.nom = nom
         self.nombreDeParts = nombreDeParts
         self.saisons = saisons

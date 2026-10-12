@@ -11,6 +11,9 @@ import SwiftData
 /// Table des courses : une liste de courses, associée à une semaine.
 @Model
 final class Course {
+    /// Identifiant métier stable de la course, unique dans la base
+    @Attribute(.unique) var id: String
+
     /// Semaine de la course.
     var semaine: Semaine?
 
@@ -23,10 +26,12 @@ final class Course {
     var ingredientsHeritesMaterialises: Bool
 
     init(
+        id: String = UUID().uuidString,
         semaine: Semaine? = nil,
         ingredients: [IngredientCourse] = [],
         ingredientsHeritesMaterialises: Bool = false
     ) {
+        self.id = id
         self.semaine = semaine
         self.ingredients = ingredients
         self.ingredientsHeritesMaterialises = ingredientsHeritesMaterialises

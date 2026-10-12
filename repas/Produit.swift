@@ -23,6 +23,9 @@ enum TypeUnite: String, Codable, CaseIterable, Identifiable {
 /// Table des produits : un aliment ou ingrédient, étiqueté par des tags.
 @Model
 final class Produit {
+    /// Identifiant métier stable du produit, unique dans la base
+    @Attribute(.unique) var id: String
+
     /// Nom du produit, unique dans la base
     @Attribute(.unique) var nom: String
 
@@ -33,7 +36,8 @@ final class Produit {
     /// Type d'unité utilisé par défaut dans les recettes et la liste de courses.
     var typeUnite: TypeUnite
 
-    init(nom: String, typeUnite: TypeUnite = .piece, tags: [Tag] = []) {
+    init(id: String = UUID().uuidString, nom: String, typeUnite: TypeUnite = .piece, tags: [Tag] = []) {
+        self.id = id
         self.nom = nom
         self.typeUnite = typeUnite
         self.tags = tags
