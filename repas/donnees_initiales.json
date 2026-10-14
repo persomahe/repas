@@ -1809,11 +1809,15 @@
       "ingredients": [
         {
           "produit": "oignon",
-          "quantite": 250.0
+          "quantite": 2.0
         },
         {
           "produit": "poivron-rouge",
           "quantite": 150.0
+        },
+        {
+          "produit": "carotte",
+          "quantite": 8.0
         },
         {
           "produit": "huile-d-olive",
@@ -1828,7 +1832,7 @@
           "quantite": 300.0
         },
         {
-          "produit": "pommes-terre-ratte",
+          "produit": "pommes-terre",
           "quantite": 400.0
         },
         {

@@ -56,6 +56,45 @@ struct CourseExportDTO: Codable {
     let id: String
     let ingredientsHeritesMaterialises: Bool
     let ingredients: [IngredientCourseExportDTO]
+
+    init(
+        id: String,
+        ingredientsHeritesMaterialises: Bool,
+        ingredients: [IngredientCourseExportDTO]
+    ) {
+        self.id = id
+        self.ingredientsHeritesMaterialises = ingredientsHeritesMaterialises
+        self.ingredients = ingredients
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        ingredientsHeritesMaterialises = try container.decode(
+            Bool.self,
+            forKey: .ingredientsHeritesMaterialises
+        )
+
+        // Accepte le format normal [ {...} ] et l'ancien format {...}
+        // qui peut être produit lorsqu'une seule ligne de course est exportée.
+        if let liste = try? container.decode(
+            [IngredientCourseExportDTO].self,
+            forKey: .ingredients
+        ) {
+            ingredients = liste
+        } else {
+            ingredients = [try container.decode(
+                IngredientCourseExportDTO.self,
+                forKey: .ingredients
+            )]
+        }
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case ingredientsHeritesMaterialises
+        case ingredients
+    }
 }
 
 struct IngredientCourseExportDTO: Codable {

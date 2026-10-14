@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
@@ -16,6 +17,12 @@ struct ContentView: View {
     @State private var afficherInformations = false
     @State private var fichierAPartager: URL?
     @State private var messageExport: String?
+    @State private var messageExportApresPartage: String?
+
+    @State private var fichierAImporter: URL?
+    @State private var afficherImport = false
+    @State private var afficherConflitDate = false
+    @State private var messageImport: String?
 
     /// La dernière semaine (la plus récente), si elle existe
     private var derniereSemaine: Semaine? {
@@ -45,7 +52,10 @@ struct ContentView: View {
     private func exporterDerniereSemaine() {
         do {
             fichierAPartager = try SemaineExportService.creerFichier(dans: modelContext)
+            messageExport = nil
+            messageExportApresPartage = "Export terminé."
         } catch {
+            messageExportApresPartage = nil
             messageExport = error.localizedDescription
         }
     }
@@ -83,14 +93,31 @@ struct ContentView: View {
                     .padding(.bottom, 44)
 
 
-                    Button {
-                        exporterDerniereSemaine()
+                    NavigationLink {
+                        PartageView(
+                            exportEstDisponible: exportEstDisponible,
+                            messageExportIndisponible: messageExportIndisponible,
+                            messageImport: $messageImport,
+                            messageExport: $messageExport,
+                            messageExportApresPartage: $messageExportApresPartage,
+                            fichierAPartager: $fichierAPartager,
+                            afficherConflitDate: $afficherConflitDate,
+
+                            exporter: exporterDerniereSemaine,
+
+                            importer: { afficherImport = true },
+                            remplacerImport: {
+                                if let url = fichierAImporter {
+                                    importer(url: url, remplacerSemaineDeMemeDate: true)
+                                }
+                            }
+
+                        )
                     } label: {
-                        Label("Partager mes courses", systemImage: "square.and.arrow.up")
+                        Label("Import / Export", systemImage: "arrow.up.arrow.down")
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(Color(red: 0.922, green: 0.651, blue: 0.294))             .disabled(!exportEstDisponible)
-                    .opacity(exportEstDisponible ? 1 : 0.55)
+                    .tint(Color(red: 0.922, green: 0.651, blue: 0.294))
 
                     if !exportEstDisponible {
                         Text(messageExportIndisponible)
@@ -165,27 +192,43 @@ struct ContentView: View {
                     .tint(.orange)
                 }
             }
-            .sheet(isPresented: Binding(
-                get: { fichierAPartager != nil },
-                set: { if !$0 { fichierAPartager = nil } }
-            )) {
-                if let url = fichierAPartager {
-                    ActivityView(activityItems: [url])
-                        .presentationDetents([.medium])
+            .fileImporter(
+                isPresented: $afficherImport,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                switch result {
+                case .success(let urls):
+                    guard let url = urls.first else { return }
+                    fichierAImporter = url
+                    importer(url: url, remplacerSemaineDeMemeDate: false)
+                case .failure(let error):
+                    messageImport = error.localizedDescription
                 }
-            }
-            .alert("Export impossible", isPresented: Binding(
-                get: { messageExport != nil },
-                set: { if !$0 { messageExport = nil } }
-            )) {
-                Button("OK", role: .cancel) { messageExport = nil }
-            } message: {
-                Text(messageExport ?? "Une erreur est survenue.")
             }
         }
         
     }
     
+    private func importer(url: URL, remplacerSemaineDeMemeDate: Bool) {
+        do {
+            try SemaineImportService.importer(
+                depuis: url,
+                dans: modelContext,
+                remplacerSemaineDeMemeDate: remplacerSemaineDeMemeDate
+            )
+            fichierAImporter = nil
+            messageImport = "La semaine et la liste de courses ont été importées."
+        } catch let error as SemaineImportService.ImportError {
+            if case .conflitDate = error {
+                afficherConflitDate = true
+            } else {
+                messageImport = error.localizedDescription
+            }
+        } catch {
+            messageImport = error.localizedDescription
+        }
+    }
 }
 
 // Arrière-plan partagé utilisé par toutes les vues de l'application.
@@ -335,4 +378,95 @@ private struct CourseDestinationView: View {
 #Preview {
     ContentView()
         .modelContainer(PreviewData.container())
+}
+private struct PartageView: View {
+    let exportEstDisponible: Bool
+    let messageExportIndisponible: String
+    @Binding var messageImport: String?
+    @Binding var messageExport: String?
+    @Binding var messageExportApresPartage: String?
+    @Binding var fichierAPartager: URL?
+    @Binding var afficherConflitDate: Bool
+    let exporter: () -> Void
+    let importer: () -> Void
+    let remplacerImport: () -> Void
+
+    @State private var afficherExportTermine = false
+
+    var body: some View {
+        ZStack {
+            FondPageBackground()
+            VStack(spacing: 20) {
+                Button(action: exporter) {
+                    Label("Partager mes courses", systemImage: "square.and.arrow.up")
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(!exportEstDisponible)
+
+                if !exportEstDisponible {
+                    Text(messageExportIndisponible)
+                        .font(.caption)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+
+                Button(action: importer) {
+                    Label("Importer une semaine", systemImage: "square.and.arrow.down")
+                }
+                .buttonStyle(.borderedProminent)
+            }
+            .padding()
+        }
+        .navigationTitle("Partage")
+        .sheet(
+            isPresented: Binding(
+                get: { fichierAPartager != nil },
+                set: { if !$0 { fichierAPartager = nil } }
+            ),
+            onDismiss: {
+                if messageExportApresPartage != nil {
+                    messageExportApresPartage = nil
+                    afficherExportTermine = true
+                }
+            }
+        ) {
+            if let url = fichierAPartager {
+                ActivityView(activityItems: [url])
+                    .presentationDetents([.medium])
+            }
+        }
+        .alert("Import terminé", isPresented: Binding(
+            get: { messageImport != nil && !afficherConflitDate },
+            set: { if !$0 { messageImport = nil } }
+        )) {
+            Button("OK", role: .cancel) { messageImport = nil }
+        } message: {
+            Text(messageImport ?? "")
+        }
+        .alert("Export terminé", isPresented: Binding(
+            get: { messageExport != nil },
+            set: { if !$0 { messageExport = nil } }
+        )) {
+            Button("OK", role: .cancel) { messageExport = nil }
+        } message: {
+            Text(messageExport ?? "")
+        }
+        .alert("Une semaine existe déjà à cette date.", isPresented: $afficherConflitDate) {
+            Button("Remplacer", role: .destructive) {
+                remplacerImport()
+            }
+            Button("Annuler", role: .cancel) {
+                afficherConflitDate = false
+            }
+        } message: {
+            Text("Voulez-vous la remplacer ?")
+        }
+        .alert("Export terminé", isPresented: $afficherExportTermine) {
+            Button("OK") {
+                afficherExportTermine = false
+            }
+        } message: {
+            Text("Vos courses ont été partagées avec succès.")
+        }
+    }
 }
