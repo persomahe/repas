@@ -1769,6 +1769,42 @@
       ]
     },
     {
+        "id": "ras-el-hanout",
+        "nom": "Ras el hanout",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
+        "id": "paprika",
+        "nom": "Paprika",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
+        "id": "cumin",
+        "nom": "Cumin",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
+        "id": "curry",
+        "nom": "Curry",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
+        "id": "graines-sesame",
+        "nom": "Graines de sésame",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
+        "id": "huile-sesame",
+        "nom": "Huile de sésame",
+        "typeUnite": "à la pièce",
+        "tags": []
+    },
+    {
       "id": "tomates_cerises",
       "nom": "Tomates cerises",
       "typeUnite": "à la pièce",
@@ -2060,6 +2096,48 @@
         {
           "produit": "laurier",
           "quantite": 1
+        }
+      ]
+    },
+    {
+      "id": "chou-poisson",
+      "nom": "Chou farci au poisson et sésame",
+      "nombreDeParts": 6,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "curry",
+          "quantite": 1
+        },
+        {
+          "produit": "tomates-pelees-en-conserve",
+          "quantite": 400
+        },
+        {
+          "produit": "graines-sesame",
+          "quantite": 1
+        },
+        {
+          "produit": "huile-sesame",
+          "quantite": 1
+        },
+        {
+          "produit": "chou-vert",
+          "quantite": 1
+        },
+        {
+          "produit": "poisson-blanc",
+          "quantite": 500
+        },
+        {
+          "produit": "lait-coco",
+          "quantite": 200
         }
       ]
     },
@@ -2838,7 +2916,7 @@
       "ingredients": [
         {
           "produit": "lait-coco",
-          "quantite": 1
+          "quantite": 200
         },
         {
           "produit": "potiron",
@@ -3929,7 +4007,7 @@
         },
         {
           "produit": "chou-vert",
-          "quantite": 200.0
+          "quantite": 1
         }
       ]
     },
