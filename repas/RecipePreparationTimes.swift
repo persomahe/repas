@@ -67,6 +67,14 @@ enum RecipePreparationTimes {
         "gaspacho": 120,
         "soupe-chinoise": 45,
         "poulet-amande": 50,
-        "chevre-chaud": 15
+        "chevre-chaud": 15,
+        "soupe-brocoli-poireaux": 45,
+        "soupe-salade": 45,
+        "chou-boeuf": 90,
+        "chou-poisson": 90,
+        "fondue-fenouil-chorizo": 40,
+        "jardiniere-lardons": 40,
+        "aubergine-farcie": 90,
+        "gratin-chou-fleur-gorgonzola": 40
     ]
 }

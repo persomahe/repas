@@ -400,6 +400,14 @@
       ]
     },
     {
+      "id": "aubergine",
+      "nom": "Aubergine",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "legumes"
+      ]
+    },
+    {
       "id": "lentille-corail",
       "nom": "Lentilles Corail",
       "typeUnite": "au poids",
@@ -735,7 +743,7 @@
     {
       "id": "poireau",
       "nom": "Poireau",
-      "typeUnite": "à la pièce",
+      "typeUnite": "au poids",
       "tags": [
         "legumes"
       ]
@@ -763,6 +771,24 @@
       "tags": [
         "legumes"
       ]
+    },
+    {
+      "id": "cafe-moulu",
+      "nom": "Café moulu",
+      "typeUnite": "à la pièce",
+      "tags": []
+    },
+    {
+      "id": "cafe-grains",
+      "nom": "Café en grains",
+      "typeUnite": "à la pièce",
+      "tags": []
+    },
+    {
+      "id": "cafe-dosettes",
+      "nom": "Café dosettes",
+      "typeUnite": "à la pièce",
+      "tags": []
     },
     {
       "id": "laurier",
@@ -1471,6 +1497,14 @@
       ]
     },
     {
+      "id": "epinards-surgelés",
+      "nom": "Epinards surgelés à la crème",
+      "typeUnite": "à la pièce",
+      "tags": [
+        "legumes"
+      ]
+    },
+    {
       "id": "concombre",
       "nom": "Concombre",
       "typeUnite": "à la pièce",
@@ -1961,6 +1995,41 @@
       ]
     },
     {
+      "id": "soupe-salade",
+      "nom": "Soupe de salade",
+      "nombreDeParts": 4,
+      "saisons": [
+        "hiver"
+      ],
+      "tags": [
+        "legumes"
+      ],
+      "lien": null,
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "salade-verte",
+          "quantite": 1.0
+        },
+        {
+          "produit": "pomme-terre",
+          "quantite": 1
+        },
+        {
+          "produit": "oignon",
+          "quantite": 1
+        },
+        {
+          "produit": "cubes-bouillon-legumes",
+          "quantite": 1
+        },
+        {
+          "produit": "creme-fraiche",
+          "quantite": 60
+        }
+      ]
+    },
+    {
       "id": "boudin-pomme",
       "nom": "Boudin aux pommes, Purée",
       "nombreDeParts": 4,
@@ -2108,7 +2177,7 @@
         "viandes",
         "legumes"
       ],
-      "lien": "",
+      "lien": "https://www.maspatule.com/blog/2023/02/16/recette-chou-farci/?srsltid=AYCX9vKezN9GLfp569vrYfyx7yPiA_ie5BjDU4d3zJY1BSbS8BuLkDut",
       "tempsPreparationMinutes": 0,
       "ingredients": [
         {
@@ -2138,6 +2207,108 @@
         {
           "produit": "lait-coco",
           "quantite": 200
+        }
+      ]
+    },
+    {
+      "id": "fondue-fenouil-chorizo",
+      "nom": "Fondue de fenouil et chorizo",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "https://www.cookomix.com/recettes/fondue-fenouil-chorizo-thermomix/",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "fenouil",
+          "quantite": 2
+        },
+        {
+          "produit": "tomates-pelees-en-conserve",
+          "quantite": 200
+        },
+        {
+          "produit": "chorizo",
+          "quantite": 100
+        }
+      ]
+    },
+    {
+      "id": "jardiniere-lardons",
+      "nom": "Jardinière de légumes et lardons",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "lardons-fumes",
+          "quantite": 200
+        },
+        {
+          "produit": "carotte",
+          "quantite": 200
+        },
+        {
+          "produit": "pomme-terre",
+          "quantite": 200
+        },
+        {
+          "produit": "petit-pois",
+          "quantite": 400
+        }
+      ]
+    },
+    {
+      "id": "chou-boeuf",
+      "nom": "Chou farci au boeuf",
+      "nombreDeParts": 6,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "https://www.maspatule.com/blog/2023/02/16/recette-chou-farci/?srsltid=AYCX9vKezN9GLfp569vrYfyx7yPiA_ie5BjDU4d3zJY1BSbS8BuLkDut",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "oeufs",
+          "quantite": 1
+        },
+        {
+          "produit": "tomates-pelees-en-conserve",
+          "quantite": 400
+        },
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "viandehachee-5",
+          "quantite": 500
+        },
+        {
+          "produit": "chou-vert",
+          "quantite": 1
+        },
+        {
+          "produit": "ail",
+          "quantite": 3
+        },
+        {
+          "produit": "thym",
+          "quantite": 1
         }
       ]
     },
@@ -2315,6 +2486,73 @@
         {
           "produit": "salade-verte",
           "quantite": 1
+        }
+      ]
+    },
+    {
+      "id": "aubergine-farcie",
+      "nom": "Aubergines farcies",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": [
+        "viandes",
+        "legumes"
+      ],
+      "lien": "https://www.cookomix.com/recettes/aubergines-farcies-viande-hachee-thermomix/",
+      "tempsPreparationMinutes": 45,
+      "ingredients": [
+        {
+          "produit": "aubergine",
+          "quantite": 2
+        },
+        {
+          "produit": "ail",
+          "quantite": 3
+        },
+        {
+          "produit": "oignon",
+          "quantite": 2
+        },
+        {
+          "produit": "poivron-rouge",
+          "quantite": 1
+        },
+        {
+          "produit": "tomate-pelees-en-conserve",
+          "quantite": 300
+        },
+        {
+          "produit": "viande-hachee-5",
+          "quantite": 400
+        },
+        {
+          "produit": "fromage-râpé",
+          "quantite": 100
+        }
+      ]
+    },
+    {
+      "id": "gratin-chou-fleur-gorgonzola",
+      "nom": "Gratin de chou-fleur au gorgonzola",
+      "nombreDeParts": 4,
+      "saisons": [],
+      "tags": [
+        "legumes"
+      ],
+      "lien": "https://www.cookomix.com/recettes/gratin-chou-fleur-gorgonzola-thermomix/",
+      "tempsPreparationMinutes": 45,
+      "ingredients": [
+        {
+          "produit": "chou-fleur",
+          "quantite": 1
+        },
+        {
+          "produit": "gorgonzola",
+          "quantite": 120
+        },
+        {
+          "produit": "creme-fraiche",
+          "quantite": 200
         }
       ]
     },
@@ -2875,7 +3113,7 @@
       "ingredients": [
         {
           "produit": "miel",
-          "quantite": 1.0,
+          "quantite": 1.0
         },
         {
           "produit": "jambon",
@@ -2954,6 +3192,31 @@
         {
           "produit": "oeufs",
           "quantite": 2
+        }
+      ]
+    },
+    {
+      "id": "soupe-brocoli-poireaux",
+      "nom": "Soupe brocoli et poireaux",
+      "nombreDeParts": 6,
+      "saisons": [],
+      "tags": [
+        "legumes"
+      ],
+      "lien": "https://www.cookomix.com/recettes/potage-brocoli-poireaux-thermomix/",
+      "tempsPreparationMinutes": 0,
+      "ingredients": [
+        {
+          "produit": "Brocolis",
+          "quantite": 1
+        },
+        {
+          "produit": "poireau",
+          "quantite": 350.0
+        },
+        {
+          "produit": "creme-fraiche",
+          "quantite": 60.0
         }
       ]
     },
@@ -3702,7 +3965,7 @@
         },
         {
           "produit": "poireau",
-          "quantite": 2
+          "quantite": 300
         }
       ]
     },
@@ -3833,7 +4096,7 @@
         },
         {
           "produit": "poireau",
-          "quantite": 2
+          "quantite": 300.0
         },
         {
           "produit": "oignon",

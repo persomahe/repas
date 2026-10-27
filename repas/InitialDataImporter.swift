@@ -44,7 +44,12 @@ enum InitialDataImporter {
             nom = try container.decode(String.self, forKey: .nom)
             nombreDeParts = try container.decode(Int.self, forKey: .nombreDeParts)
             tags = try container.decode([String].self, forKey: .tags)
-            lien = try container.decodeIfPresent(URL.self, forKey: .lien)
+
+            // Un lien vide est équivalent à l'absence de lien dans le catalogue.
+            let lienTexte = try container.decodeIfPresent(String.self, forKey: .lien)?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            lien = lienTexte.flatMap { $0.isEmpty ? nil : URL(string: $0) }
+
             tempsPreparationMinutes = try container.decode(Int.self, forKey: .tempsPreparationMinutes)
             ingredients = try container.decode([IngredientDTO].self, forKey: .ingredients)
 
